@@ -1,0 +1,17 @@
+.signup {
+    display: flex;
+    flex-direction: column;
+    flex-wrap: nowrap;
+}
+
+body {
+    background-color: black;
+    color: white;
+}
+
+input {
+    width: auto;
+    background-color: rgb(0, 104, 69);
+    color: white;
+    font-size: 1.5rem;
+}
