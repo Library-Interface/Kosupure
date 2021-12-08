@@ -7,6 +7,7 @@ class CustomUser(AbstractUser):
     date_of_birth = models.DateField(null=True, blank=True)
     website = models.URLField(blank=True)
     biography = models.TextField(blank=True)
+    profile_pic = models.ImageField(upload_to='static/images', null=True, blank=True)
 
     def __str__(self):
         return self.username

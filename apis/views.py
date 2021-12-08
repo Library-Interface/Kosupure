@@ -3,7 +3,8 @@ from rest_framework import filters
 from django.contrib.auth import get_user_model
 from rest_framework.decorators import permission_classes
 
-from .serializers import UserSerializer
+from .serializers import UserSerializer, PostSerializer, CommentSerializer
+from feed import models
 
 class UserViewSet(viewsets.ModelViewSet):
     queryset = get_user_model().objects.all()
@@ -11,5 +12,26 @@ class UserViewSet(viewsets.ModelViewSet):
 
 class CurrentUserView(generics.RetrieveAPIView):
     serializer_class = UserSerializer
+    def get_object(self):
+        return self.request.user
+
+class PostViewSet(viewsets.ModelViewSet):
+    queryset = models.Post.objects.all()
+    serializer_class = PostSerializer
+    filter_backends = [filters.SearchFilter, filters.OrderingFilter]
+    search_fields = [
+        'tags',
+        'user_name',
+    ]
+    ordering_fields = '__all__'
+
+class CurrentPostView(generics.RetrieveAPIView):
+    serializer_class = PostSerializer
+    def get_object(self):
+        return self.request.user
+
+class CommentViewSet(viewsets.ModelViewSet):
+    queryset = models.Comments.objects.all()
+    serializer_class = CommentSerializer
     def get_object(self):
         return self.request.user

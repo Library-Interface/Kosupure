@@ -23,35 +23,110 @@
 {% endif %}
 
 <h1>Hello World! (From the HTML)</h1>
-
 <div id="app">
-<h1> [[ message ]] </h1>
-<form :submit.prevent="submitPost()">
-    <textarea class="textarea" v-model="body" placeholder="What are you thinking?"></textarea>
-    <button>Submit</button>
-</form>
+    <h1> [[ message ]] </h1>
 
-<div v-for="post in posts">
-    <p> [[ post.user ]] [[ post.created_at ]] <br> [[ post.body ]]
+    <div v-for="post in posts" :key="posts.id">
+        <p> 
+            <br>
+            Posted by: [[ post.posted_by['username'] ]] 
+            Creater: [[ post.posted_by.is_creator ]] 
+            Adult: [[ post.posted_by.is_adult ]] 
+        </p>
+
+        <img :src="post.pic">
+
+        <p v-for="comment in post.comments"> 
+            Comment: [[ comment['comment'] ]]
+            Comment By: [[ comment.posted_by.username ]]
+            Creater: [[ comment.posted_by.is_creator ]] 
+            Adult: [[ comment.posted_by.is_adult ]] 
+            Date: [[ formattingDates(comment.comment_date) ]]
+        <div>
+            <input v-model="currentComment" placeholder="big butt"></input>
+            <button @click="submitComment(post)">I'm a button</button>
+        </div>
+    </div>
+
 
 </div>
 <script src="https://cdn.jsdelivr.net/npm/vue@2/dist/vue.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
 <script>
-    const vm = new Vue({
+Vue.component('new-post', {
+        data: {
+            newPostWords = '',
+            tags = '',
+            pic = '',
+            tags = '',
+            user = [],
+            selectedFile: null,
+        },
+
+        template: `
+        <div>
+            <input type="file" accept="image/jpeg" @change=onFileChanged>
+            <input type="text" placeholder="New post" v-model="newPostWords">
+            <input type="text" placeholder="Enter Tags" v-model="tags">
+            <button @click="newPost">Make a new post</button>
+        </div>
+        `,
+
+        methods: {
+            onFileChanged (event) {
+                this.selectedFile = event.target.files[0]
+            },
+            loadCurrentUser: function() {
+                axios({
+                    method: 'get',
+                    url: '/apis/v1/currentuser/'
+                }).then(response => {
+                    this.user = response.data
+                })
+            },
+            newPost: function () {
+                axios({
+                    method: 'post',
+                    url: '/apis/v1/posts/',
+                    headers: {
+                        'X-CSRFToken': this.csrf_token
+                    },
+                    data: {
+                        "user_name": this.user.id,
+                        "description": this.newPostWords,
+                        "pic": this.selectedFile,
+                        "tags": this.tags
+                    }
+                }).then(response => {
+                    this.newPostWords = ''
+                    this.loadPosts()
+                })
+            }
+        },
+        created: function () {
+            this.loadCurrentUser()
+        },
+        mounted: function () {
+            this.csrf_token = document.querySelector("input[name=csrfmiddlewaretoken]").value;
+        }
+})
+
+
+
+    let app = new Vue({
         el: "#app",
         delimiters: ['[[', ']]'],
         data: {
             id: {},
-            name: [],
-            body: '',
-            users: [],
-            posts: [],
-            created_at: 'Now',
+            comments: [],
+            currentComment: '',
+            created_at: new Date().toISOString().slice(0,10),
             csrf_token: "",
             message: "Hello World! (From the Vue App)",
+            posts: [],
             user: [],
         },
+
         methods: {
             loadCurrentUser: function() {
                 axios({
@@ -59,35 +134,60 @@
                     url: '/apis/v1/currentuser/'
                 }).then(response => {
                     this.user = response.data
-                }),
+                })
             },
-            submitPost: function() {
-                if (this.body.length > 0) {
-                    var post = {
-                        'body': this.body,
-                        'user': this.user,
-                        'created_at': this.created_at,
-                        }
-                    this.posts.unshift(post)
-                    fetch('/api/add_post/', {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                            'X-CSRFToken': '{{ csrf_token }}'
-                        },
-                        credentials: 'same-origin',
-                        body: JSON.stringify(post)
-                    })
-                    .then((response) => {
-                        console.log(response);
-                    })
-                    .catch((error) => {
-                        console.log(error);
-                    });
-                }
-                this.body = '';
-            }
+            loadPosts: function () {
+                axios({
+                    method: 'GET',
+                    url: '/apis/v1/posts/'
+                }).then(response => {
+                    this.posts = response.data
+                })
+            },
+            loadComments: function () {
+                axios({
+                    method: 'GET',
+                    url: '/apis/v1/comments/'
+                }).then(response => {
+                    this.comments = response.data
+                })
+            },
+            formattingDates: function (date) {
+                let dateObj = new Date(date)
+                let options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric', hour: 'numeric', minute: 'numeric' }
+                let newformat=dateObj.toLocaleString('en-US', options)
+                console.log(typeof(dateObj))
+                return newformat
+            },
+            submitComment: function (post) {
+                axios({
+                    method: 'post',
+                    url: '/apis/v1/comments/',
+                    headers: {
+                        'X-CSRFToken': this.csrf_token
+                    },
+                    data: {
+                            "post": post.id,
+                            "user_name": this.user.id,
+                            "comment": this.currentComment
+                    }
+                }).then(response => {
+                    this.currentComment = ''
+                    this.loadPosts()
+                })
+            },
         },
+
+        created: function () {
+            this.loadPosts()
+            this.loadCurrentUser()
+            this.loadComments()
+        },
+
+        mounted: function () {
+            this.csrf_token = document.querySelector("input[name=csrfmiddlewaretoken]").value;
+        }
+        
     })
 </script>
 </body>

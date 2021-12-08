@@ -6,7 +6,7 @@ from django.utils import timezone
 
 class Post(models.Model):
 	description = models.CharField(max_length=800, blank=True)
-	pic = models.ImageField(upload_to='path/to/img')
+	pic = models.ImageField(upload_to='static/images')
 	date_posted = models.DateTimeField(default=timezone.now)
 	user_name = models.ForeignKey(get_user_model(), on_delete=models.CASCADE)
 	tags = models.CharField(max_length=400, blank=True)
@@ -26,3 +26,6 @@ class Comments(models.Model):
 class Like(models.Model):
 	user = models.ForeignKey(get_user_model(), related_name='likes', on_delete=models.CASCADE)
 	post = models.ForeignKey(Post, related_name='likes', on_delete=models.CASCADE)
+
+	def __str__(self):
+		return self.user
