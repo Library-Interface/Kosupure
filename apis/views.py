@@ -21,7 +21,7 @@ class PostViewSet(viewsets.ModelViewSet):
     filter_backends = [filters.SearchFilter, filters.OrderingFilter]
     search_fields = [
         'tags',
-        'user_name',
+        'user_name__username',
     ]
     ordering_fields = '__all__'
 

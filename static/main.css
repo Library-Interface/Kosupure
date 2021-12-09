@@ -9,13 +9,108 @@ body {
     color: white;
 }
 
-input {
-    width: auto;
-    background-color: rgb(0, 104, 69);
-    color: white;
+header, h1 {
+    font-family: papyrus;
+    font-variant: small-caps;
+}
+
+.logout {
     font-size: 1.5rem;
+    color: white;
+    border: rgb(46, 46, 248) solid 3px;
+    background-color: rgba(0, 219, 248, 0.815);
+    margin: 3px;
+    padding: 5px;
+}
+
+.logout:hover {
+    border-color: rgba(255,255,255,1);
 }
 
 img {
     width: 100vw;
+}
+
+.submission {
+    border: rgba(0, 219, 248, 0.815) solid 4px;
+    width: 70vw;
+}
+
+.submit {
+    display:inline-block;
+    background-color: rgba(0, 219, 248, 0.815);
+    padding:0.3em 1.2em;
+    margin:0 0.1em 0.1em 0;
+    border:0.16em solid rgba(255,255,255,0);
+    border-radius:2em;
+    box-sizing: border-box;
+    text-decoration:none;
+    font-family:'Roboto',sans-serif;
+    font-weight:300;
+    color:#FFFFFF;
+    text-shadow: 0 0.04em 0.04em rgba(0,0,0,0.35);
+    text-align:center;
+    transition: all 0.2s;
+}
+
+.reveal {
+    display:inline-block;
+    background-color: rgba(0, 219, 248, 0.815);
+    padding:0.3em 1.2em;
+    margin:0 0.1em 0.1em 0;
+    border:0.16em solid rgba(255,255,255,0);
+    border-radius:2em;
+    box-sizing: border-box;
+    text-decoration:none;
+    font-family:'Roboto',sans-serif;
+    font-weight:300;
+    color:#FFFFFF;
+    text-shadow: 0 0.04em 0.04em rgba(0,0,0,0.35);
+    text-align:center;
+    transition: all 0.2s;
+    font-size: 1.3rem;
+}
+
+.reveal:hover {
+    border-color: rgba(255,255,255,1);
+}
+
+input[type=text] {
+    min-width: 400px;
+    padding:5px; 
+    margin:5px;
+    border:2px solid #ccc; 
+    -webkit-border-radius: 5px;
+    border-radius: 5px;
+}
+
+input[type=text]:focus {
+    border-color:#333;
+}
+
+input[type=submit] {
+    padding:5px 15px; 
+    background:#ccc; 
+    border:0 none;
+    cursor:pointer;
+    -webkit-border-radius: 5px;
+    border-radius: 5px; 
+}
+
+.description {
+    margin: 8px;
+    padding: 8px;
+    font-family: copperplate gothic light;
+}
+
+.flex-container {
+    font-family: copperplate gothic light;
+    display: flex;
+    justify-content: space-between;
+}
+
+.delete {
+    background: red;
+    font-weight: 700;
+    width: 20vh;
 }

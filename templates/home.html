@@ -15,105 +15,116 @@
 {% if user.is_authenticated %}
 <header>
 <h1>Welcome to Kosupure, {{ user.username }}!</h1>
-<p><a href="{% url 'logout' %}">Logout</a><p>
+<p><a href="{% url 'logout' %}" class="logout">Logout</a><p>
 </header>
 {% else %}
 <h1>Welcome to Kosupure, visitor!</h1>
-<p>You are not logged in. <a href="{% url 'login' %}">Login</a> <a href="{% url 'users:signup' %}">Sign Up</a></p>
+<p>You are not logged in. <a href="{% url 'login' %}" class="logout">Login</a> <a href="{% url 'users:signup' %}" class="logout">Sign Up</a></p>
 {% endif %}
 
-<h1>Hello World! (From the HTML)</h1>
 <div id="app">
     <h1> [[ message ]] </h1>
-
+        <button-counter class="reveal"></button-counter>
+        <button @click="isHidden = !isHidden" class="reveal" style="animation-delay:0.07s">Click to make a new post</button><br>
+        <new-post v-if="!isHidden" :user="user" :csrf_token='csrf_token' @post-created="afterPostCreated()" class="submission"></new-post>
+        <br>
     <div v-for="post in posts" :key="posts.id">
-        <p> 
-            <br>
-            Posted by: [[ post.posted_by['username'] ]] 
-            Creater: [[ post.posted_by.is_creator ]] 
-            Adult: [[ post.posted_by.is_adult ]] 
-        </p>
-
+        <div class="flex-container"> 
+            <div>Posted by: [[ post.posted_by['username'] ]] </div>
+            <div>[[ formattingDates(post.date_posted) ]]</div>
+            <div v-if="post.posted_by.is_adult == true">This creator is an adult </div>
+        </div>
+        <div v-if="post.posted_by.username == user.username">
+            <button @click="deletePost(post)" class="delete">Delete Post</button>
+        </div>
         <img :src="post.pic">
-
-        <p v-for="comment in post.comments"> 
-            Comment: [[ comment['comment'] ]]
-            Comment By: [[ comment.posted_by.username ]]
-            Creater: [[ comment.posted_by.is_creator ]] 
-            Adult: [[ comment.posted_by.is_adult ]] 
-            Date: [[ formattingDates(comment.comment_date) ]]
+        <span class="description"> 
+            [[ post.description ]] <br>
+            Tags: [[ post.tags ]]
+        </span>
+        <hr>
+        <div v-for="comment in post.comments"> 
+            <div class="flex-container">
+                <div>Comment By: [[ comment.posted_by.username ]]</div>
+                <div v-if="comment.posted_by.is_creator == true">Creator Status: Active</div>
+                <div v-if="comment.posted_by.is_adult == true">This creator is an adult</div>
+            </div>
+            <div class="flex-container">
+                <div>[[ comment['comment'] ]]</div>
+                <div>[[ formattingDates(comment.comment_date) ]]</div>
+            </div>
+            <br>
+        </div>
         <div>
-            <input v-model="currentComment" placeholder="big butt"></input>
-            <button @click="submitComment(post)">I'm a button</button>
+            <textarea cols="50" rows="2"v-model="currentComment" placeholder="Comments go here (max length 600 characters)"></textarea>
+            <button @click="submitComment(post)" class="submit">Submit</button>
         </div>
     </div>
-
 
 </div>
 <script src="https://cdn.jsdelivr.net/npm/vue@2/dist/vue.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
 <script>
-Vue.component('new-post', {
-        data: {
-            newPostWords = '',
-            tags = '',
-            pic = '',
-            tags = '',
-            user = [],
-            selectedFile: null,
+
+    Vue.component('button-counter', {
+        delimiters: ['[[', ']]'],
+        data: function () {
+            return {
+            count: 0
+            }
         },
-
         template: `
-        <div>
-            <input type="file" accept="image/jpeg" @change=onFileChanged>
-            <input type="text" placeholder="New post" v-model="newPostWords">
-            <input type="text" placeholder="Enter Tags" v-model="tags">
-            <button @click="newPost">Make a new post</button>
-        </div>
-        `,
+        <button v-on:click="count++">You clicked me [[ count ]] times</button>
+        <button v-if="count > 5" @click="isHidden = !isHidden" class="reveal" style="animation-delay:0.07s">Click to make a new post</button>
+        `
+        })
 
+    Vue.component('new-post', {
+        delimiters: ['[[', ']]'],
+        props: [ 'user', 'csrf_token' ],
+        data: function () {
+            return {
+            newPostWords:  '',
+            tags: '',
+            pic: '',
+            selectedFile: null,
+        }},
+        template: `
+        <form enctype="multipart/form-data">
+            <textarea cols="100" rows="3" placeholder="Enter description of the image here (max length 800 characters)" v-model="newPostWords" required></textarea>
+            <textarea cols="100" rows="2" placeholder="Enter Tags for the image here (max length 400 characters)" v-model="tags"></textarea><br>
+            <input type="file" accept="image/*" @change=onFileChanged>
+            <button @click.prevent="newPost" class="submit">Submit</button>
+        </form>
+        `,
         methods: {
             onFileChanged (event) {
+                console.log(event)
                 this.selectedFile = event.target.files[0]
             },
-            loadCurrentUser: function() {
-                axios({
-                    method: 'get',
-                    url: '/apis/v1/currentuser/'
-                }).then(response => {
-                    this.user = response.data
-                })
-            },
             newPost: function () {
+                let formData = new FormData()
+                formData.append('user_name', this.user.id)
+                formData.append('description', this.newPostWords)
+                formData.append('pic', this.selectedFile)
+                formData.append('tags', this.tags)
                 axios({
                     method: 'post',
                     url: '/apis/v1/posts/',
                     headers: {
                         'X-CSRFToken': this.csrf_token
                     },
-                    data: {
-                        "user_name": this.user.id,
-                        "description": this.newPostWords,
-                        "pic": this.selectedFile,
-                        "tags": this.tags
-                    }
+                    data: formData
                 }).then(response => {
                     this.newPostWords = ''
-                    this.loadPosts()
+                    this.tags = ''
+                    this.$emit("post-created")
                 })
             }
         },
-        created: function () {
-            this.loadCurrentUser()
-        },
-        mounted: function () {
-            this.csrf_token = document.querySelector("input[name=csrfmiddlewaretoken]").value;
-        }
 })
 
-
-
-    let app = new Vue({
+    const app = new Vue({
         el: "#app",
         delimiters: ['[[', ']]'],
         data: {
@@ -125,6 +136,7 @@ Vue.component('new-post', {
             message: "Hello World! (From the Vue App)",
             posts: [],
             user: [],
+            isHidden: true,
         },
 
         methods: {
@@ -154,7 +166,7 @@ Vue.component('new-post', {
             },
             formattingDates: function (date) {
                 let dateObj = new Date(date)
-                let options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric', hour: 'numeric', minute: 'numeric' }
+                let options = { weekday: 'short', year: 'numeric', month: 'short', day: 'numeric', hour: 'numeric', minute: 'numeric' }
                 let newformat=dateObj.toLocaleString('en-US', options)
                 console.log(typeof(dateObj))
                 return newformat
@@ -176,18 +188,32 @@ Vue.component('new-post', {
                     this.loadPosts()
                 })
             },
+            deletePost: function (post) {
+                axios({
+                    method: 'delete',
+                    url: `/apis/v1/posts/${post.id}/`,
+                    headers: {
+                        'X-CSRFToken': this.csrf_token
+                    },
+                }).then(response => {
+                    this.loadPosts()
+                })
+            },
+            afterPostCreated: function () {
+                this.loadPosts()
+                this.isHidden = true
+            }
         },
-
         created: function () {
             this.loadPosts()
             this.loadCurrentUser()
             this.loadComments()
         },
-
         mounted: function () {
             this.csrf_token = document.querySelector("input[name=csrfmiddlewaretoken]").value;
         }
         
     })
+
 </script>
 </body>
