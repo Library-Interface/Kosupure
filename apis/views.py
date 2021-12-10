@@ -30,8 +30,11 @@ class CurrentPostView(generics.RetrieveAPIView):
     def get_object(self):
         return self.request.user
 
-class CommentViewSet(viewsets.ModelViewSet):
-    queryset = models.Comments.objects.all()
+class CurrentCommentView(generics.RetrieveAPIView):
     serializer_class = CommentSerializer
     def get_object(self):
         return self.request.user
+
+class CommentViewSet(viewsets.ModelViewSet):
+    queryset = models.Comments.objects.all()
+    serializer_class = CommentSerializer

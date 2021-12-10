@@ -14,6 +14,7 @@ class NestedCommentSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.Comments
         fields = (
+            'id',
             'post',
             'user_name',
             'comment',
@@ -45,6 +46,7 @@ class PostSerializer(serializers.ModelSerializer):
 class CommentSerializer(serializers.ModelSerializer):
     posted_by = NestedUserSerializer(many=False, read_only=True, source='user_name')
     class Meta:
+        model = models.Comments
         fields = (
             'id',
             'post',
@@ -53,4 +55,3 @@ class CommentSerializer(serializers.ModelSerializer):
             'comment_date',
             'comment',
         )
-        model = models.Comments

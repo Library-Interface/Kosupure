@@ -1,7 +1,6 @@
 <!DOCTYPE html>
 {% load static %}
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -13,21 +12,18 @@
 <body>
 {% csrf_token %}
 {% if user.is_authenticated %}
-<header>
-<h1>Welcome to Kosupure, {{ user.username }}!</h1>
-<p><a href="{% url 'logout' %}" class="logout">Logout</a><p>
-</header>
+    <header>
+        <h1>Welcome to Kosupure, {{ user.username }}! <span><a href="{% url 'logout' %}" class="logout">Logout</a></span></h1>
+        <hr class="tophr">
+    </header>
 {% else %}
-<h1>Welcome to Kosupure, visitor!</h1>
-<p>You are not logged in. <a href="{% url 'login' %}" class="logout">Login</a> <a href="{% url 'users:signup' %}" class="logout">Sign Up</a></p>
+    <h1>Welcome to Kosupure, visitor!</h1>
+    <p>You are not logged in. <a href="{% url 'login' %}" class="logout">Login</a> <a href="{% url 'users:signup' %}" class="logout">Sign Up</a></p>
 {% endif %}
 
 <div id="app">
     <h1> [[ message ]] </h1>
-        <button-counter class="reveal"></button-counter>
-        <button @click="isHidden = !isHidden" class="reveal" style="animation-delay:0.07s">Click to make a new post</button><br>
-        <new-post v-if="!isHidden" :user="user" :csrf_token='csrf_token' @post-created="afterPostCreated()" class="submission"></new-post>
-        <br>
+        <button-counter class="reveal" :user="user" :csrf_token='csrf_token' @post-created1="afterPostCreated()"></button-counter> <br>
     <div v-for="post in posts" :key="posts.id">
         <div class="flex-container"> 
             <div>Posted by: [[ post.posted_by['username'] ]] </div>
@@ -45,16 +41,20 @@
         <hr>
         <div v-for="comment in post.comments"> 
             <div class="flex-container">
-                <div>Comment By: [[ comment.posted_by.username ]]</div>
+                <div>[[ comment.posted_by.username ]] says:</div>
                 <div v-if="comment.posted_by.is_creator == true">Creator Status: Active</div>
                 <div v-if="comment.posted_by.is_adult == true">This creator is an adult</div>
             </div>
             <div class="flex-container">
-                <div>[[ comment['comment'] ]]</div>
+                <i><div>[[ comment['comment'] ]]</div></i>
                 <div>[[ formattingDates(comment.comment_date) ]]</div>
             </div>
+            <div v-if="comment.posted_by.username == user.username">
+                <button @click="deleteComment(comment)" class="delete">Delete Comment</button>
+            </div> 
             <br>
         </div>
+        <button @click="loadMoreComments()" class="morecomments">Load more comments</button>
         <div>
             <textarea cols="50" rows="2"v-model="currentComment" placeholder="Comments go here (max length 600 characters)"></textarea>
             <button @click="submitComment(post)" class="submit">Submit</button>
@@ -68,15 +68,18 @@
 
     Vue.component('button-counter', {
         delimiters: ['[[', ']]'],
+        props: [ 'user', 'csrf_token' ],
         data: function () {
             return {
-            count: 0
+            count: 0,
+            isHidden: true,
             }
         },
-        template: `
+        template: `<div>
         <button v-on:click="count++">You clicked me [[ count ]] times</button>
-        <button v-if="count > 5" @click="isHidden = !isHidden" class="reveal" style="animation-delay:0.07s">Click to make a new post</button>
-        `
+        <button v-if="count > 4" @click="isHidden = !isHidden" class="reveal" style="animation-delay:0.07s">Click to make a new post</button>
+        <new-post v-if="!isHidden" :user="user" :csrf_token='csrf_token' @post-created="$emit('post-created1'), isHidden=true"  class="submission"></new-post>
+        </div>`
         })
 
     Vue.component('new-post', {
@@ -93,7 +96,7 @@
         <form enctype="multipart/form-data">
             <textarea cols="100" rows="3" placeholder="Enter description of the image here (max length 800 characters)" v-model="newPostWords" required></textarea>
             <textarea cols="100" rows="2" placeholder="Enter Tags for the image here (max length 400 characters)" v-model="tags"></textarea><br>
-            <input type="file" accept="image/*" @change=onFileChanged>
+            <input type="file" accept="image/*" @change=onFileChanged class="choosefile">
             <button @click.prevent="newPost" class="submit">Submit</button>
         </form>
         `,
@@ -137,8 +140,9 @@
             posts: [],
             user: [],
             isHidden: true,
+            totalPosts: 0,
+            totalComments: 0,
         },
-
         methods: {
             loadCurrentUser: function() {
                 axios({
@@ -151,17 +155,39 @@
             loadPosts: function () {
                 axios({
                     method: 'GET',
-                    url: '/apis/v1/posts/'
+                    url: '/apis/v1/posts/?results=5'
                 }).then(response => {
-                    this.posts = response.data
+                    this.posts = response.data.reverse()
                 })
             },
+            getMorePosts() {
+                window.onscroll = () => {
+                    let bottomOfWindow = document.documentElement.scrollTop + window.innerHeight === document.documentElement.offsetHeight;
+                    if (bottomOfWindow) {
+                        axios({
+                            method: 'Get',
+                            url: '/apis/v1/posts/'
+                        }).then(response => {
+                            this.posts.push(response.data.results[0])
+                        })
+                    }}},
             loadComments: function () {
+                axios({
+                    method: 'GET',
+                    url: '/apis/v1/comments/?results=3',
+                    params: {
+                        _limit: 3
+                    }
+                }).then(response => {
+                    this.comments = response.data
+                })
+            },
+            loadMoreComments: function () {
                 axios({
                     method: 'GET',
                     url: '/apis/v1/comments/'
                 }).then(response => {
-                    this.comments = response.data
+                    this.comments.push(response.data.results[0])
                 })
             },
             formattingDates: function (date) {
@@ -199,6 +225,17 @@
                     this.loadPosts()
                 })
             },
+            deleteComment: function (comment) {
+                axios({
+                    method: 'delete',
+                    url: `/apis/v1/comments/${comment.id}/`,
+                    headers: {
+                        'X-CSRFToken': this.csrf_token
+                    },
+                }).then(response => {
+                    this.loadPosts()
+                })
+            },
             afterPostCreated: function () {
                 this.loadPosts()
                 this.isHidden = true
@@ -209,8 +246,16 @@
             this.loadCurrentUser()
             this.loadComments()
         },
+        beforeMount() {
+            this.loadPosts()
+        },
         mounted: function () {
-            this.csrf_token = document.querySelector("input[name=csrfmiddlewaretoken]").value;
+            this.csrf_token = document.querySelector("input[name=csrfmiddlewaretoken]").value
+            this.getMorePosts()
+            this.totalPosts = this.posts.length
+                console.log(this.posts.length)
+            this.totalComments = this.comments.length
+                console.log(this.comments.length)
         }
         
     })
