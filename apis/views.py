@@ -38,3 +38,12 @@ class CurrentCommentView(generics.RetrieveAPIView):
 class CommentViewSet(viewsets.ModelViewSet):
     queryset = models.Comments.objects.all()
     serializer_class = CommentSerializer
+
+# class LikeViewSet(viewsets.ModelViewSet):
+#     queryset = models.Like.objects.all()
+#     serializer_class = LikeSerializer
+
+# class CurrentLikeView(generics.RetrieveAPIView):
+#     serializer_class = LikeSerializer
+#     def get_object(self):
+#         return self.request.user

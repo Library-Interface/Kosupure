@@ -25,11 +25,12 @@ class NestedCommentSerializer(serializers.ModelSerializer):
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = get_user_model()
-        fields = ('id', 'username', 'email', 'website', 'biography', 'is_creator', 'is_adult', 'profile_pic')
+        fields = ('id', 'username', 'email', 'website', 'biography', 'is_creator', 'is_adult', 'profile_pic', 'likes')
 
 class PostSerializer(serializers.ModelSerializer):
     comments = NestedCommentSerializer(many=True, read_only=True, source='details')
     posted_by = NestedUserSerializer(many=False, read_only=True, source='user_name')
+    liked_detail = NestedUserSerializer(many=True, read_only=True, source='liked_by')
     class Meta:
         model = models.Post
         fields = (
@@ -41,6 +42,8 @@ class PostSerializer(serializers.ModelSerializer):
             'date_posted',
             'posted_by',
             'tags',
+            'liked_by',
+            'liked_detail',
         )
 
 class CommentSerializer(serializers.ModelSerializer):
@@ -55,3 +58,12 @@ class CommentSerializer(serializers.ModelSerializer):
             'comment_date',
             'comment',
         )
+
+# class LikeSerializer(serializers.ModelSerializer):
+#     class Meta:
+#         model = models.Like
+#         fields = (
+#             'id',
+#             'user',
+#             'post',
+#         )

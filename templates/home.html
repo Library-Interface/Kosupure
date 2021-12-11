@@ -13,7 +13,7 @@
 {% csrf_token %}
 {% if user.is_authenticated %}
     <header>
-        <h1>Welcome to Kosupure, {{ user.username }}! <span><a href="{% url 'logout' %}" class="logout">Logout</a></span></h1>
+        <h1>Welcome to Kosupure, {{ user.username }}! <span><a href="{% url 'logout' %}" class="logout">Logout ?</a></span></h1>
         <hr class="tophr">
     </header>
 {% else %}
@@ -34,6 +34,9 @@
             <button @click="deletePost(post)" class="delete">Delete Post</button>
         </div>
         <img :src="post.pic">
+        
+        <button-like :user="user" :post="post" :csrf_token='csrf_token' @post-liked="afterPostLiked()"></button-like>
+
         <span class="description"> 
             [[ post.description ]] <br>
             Tags: [[ post.tags ]]
@@ -54,9 +57,9 @@
             </div> 
             <br>
         </div>
-        <button @click="loadMoreComments()" class="morecomments">Load more comments</button>
+        {% comment %} <button @click="loadMoreComments()" class="morecomments">Load more comments</button> {% endcomment %}
         <div>
-            <textarea cols="50" rows="2"v-model="currentComment" placeholder="Comments go here (max length 600 characters)"></textarea>
+            <textarea cols="50" rows="2"v-model="currentComment" placeholder="Comments go here (max length 600 characters)" v-on:keyup.enter="submitComment(post)"></textarea>
             <button @click="submitComment(post)" class="submit">Submit</button>
         </div>
     </div>
@@ -82,6 +85,45 @@
         </div>`
         })
 
+    Vue.component('button-like', {
+        delimiters: ['[[', ']]'],
+        props: [ 'user', 'csrf_token', 'post' ],
+        data: function () {
+            return {
+            likes: [],
+            }
+        },
+        template: `
+        <div class='flex-container'>
+            <div @click="submitlike" class="heartbutton"> ❤ [[ countlikes ]] ❤</div>
+            <div class="likedby"> ❤ by: <template v-for="like in post.liked_detail"> [[ like.username ]], </template></div>
+        </div>
+        `,
+        methods: {
+        submitlike: function() {
+                this.user.likes.push(this.post.id)
+            axios({
+                method: 'patch',
+                url: `/apis/v1/users/${this.user.id}/`,
+                headers: {
+                    'X-CSRFToken': this.csrf_token
+                },
+                data: {
+                    "likes": this.user.likes,
+                }
+            }).then(response => {
+                this.likes = response.data
+                this.$emit("post-liked")
+            })
+        },
+        },
+        computed: {
+            countlikes: function () {
+                return this.post.liked_by.length
+            }
+        }
+    })
+
     Vue.component('new-post', {
         delimiters: ['[[', ']]'],
         props: [ 'user', 'csrf_token' ],
@@ -93,12 +135,12 @@
             selectedFile: null,
         }},
         template: `
-        <form enctype="multipart/form-data">
+        <<form enctype="multipart/form-data">
             <textarea cols="100" rows="3" placeholder="Enter description of the image here (max length 800 characters)" v-model="newPostWords" required></textarea>
             <textarea cols="100" rows="2" placeholder="Enter Tags for the image here (max length 400 characters)" v-model="tags"></textarea><br>
             <input type="file" accept="image/*" @change=onFileChanged class="choosefile">
             <button @click.prevent="newPost" class="submit">Submit</button>
-        </form>
+        </form>>
         `,
         methods: {
             onFileChanged (event) {
@@ -136,12 +178,13 @@
             currentComment: '',
             created_at: new Date().toISOString().slice(0,10),
             csrf_token: "",
-            message: "Hello World! (From the Vue App)",
+            filter: '',
+            page: 1,
+            selection: "",
+            message: "Kosupure: Refuge for the cosplayers",
             posts: [],
             user: [],
             isHidden: true,
-            totalPosts: 0,
-            totalComments: 0,
         },
         methods: {
             loadCurrentUser: function() {
@@ -155,7 +198,13 @@
             loadPosts: function () {
                 axios({
                     method: 'GET',
-                    url: '/apis/v1/posts/?results=5'
+                    url: '/apis/v1/posts/',
+                    params: {
+                        filter: this.filter,
+                        type: this.selection,
+                        page: this.page,
+                        _limit: 3
+                    }
                 }).then(response => {
                     this.posts = response.data.reverse()
                 })
@@ -174,8 +223,11 @@
             loadComments: function () {
                 axios({
                     method: 'GET',
-                    url: '/apis/v1/comments/?results=3',
+                    url: `/apis/v1/comments/`,
                     params: {
+                        filter: this.filter,
+                        type: this.selection,
+                        page: this.page,
                         _limit: 3
                     }
                 }).then(response => {
@@ -239,6 +291,9 @@
             afterPostCreated: function () {
                 this.loadPosts()
                 this.isHidden = true
+            },
+            afterPostLiked: function () {
+                this.loadPosts()
             }
         },
         created: function () {
@@ -252,10 +307,6 @@
         mounted: function () {
             this.csrf_token = document.querySelector("input[name=csrfmiddlewaretoken]").value
             this.getMorePosts()
-            this.totalPosts = this.posts.length
-                console.log(this.posts.length)
-            this.totalComments = this.comments.length
-                console.log(this.comments.length)
         }
         
     })

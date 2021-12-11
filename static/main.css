@@ -135,3 +135,24 @@ input[type=submit] {
     font-weight: 700;
     width: 20vh;
 }
+
+.delete:hover {
+    border-color: white;
+}
+
+.likedby {
+        max-width: 600px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+}
+
+.heartbutton {
+    border:rgba(0, 219, 248, 0.815) solid 4px;
+    margin: 8px;
+    padding: 8px;
+}
+
+.heartbutton:hover {
+    border-color: rgba(255,255,255,1);
+}
