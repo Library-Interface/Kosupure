@@ -11,64 +11,56 @@ Guest - Public only access to feed and profiles
 Logged-in: Ability to follow creators and participate in fan-page discussion board
 Creator - ability to view 'adult'
 Guest vs Logged-in vs Creator tri-chotamy
-\
 
-cut from an experiment in home app area
 
-Vue.component('new-post', {
-        data: {
-            newPostWords = '',
-            tags = '',
-            pic = '',
-            tags = '',
-            user = [],
-            selectedFile: null,
-        },
+Going through some changes...
 
-        template: `
-        <div>
-            <input type="file" accept="image/jpeg" @change=onFileChanged>
-            <input type="text" placeholder="New post" v-model="newPostWords">
-            <input type="text" placeholder="Enter Tags" v-model="tags">
-            <button @click="newPost">Make a new post</button>
-        </div>
-        `,
 
-        methods: {
-            onFileChanged (event) {
-                this.selectedFile = event.target.files[0]
+    <hr>
+        <li v-for="(comment, index) in post.comments" :key="index">method 13: [[ comment['comment'] ]] </li>
+        <button @click="loadMore" v-if="currentPage * maxPerPage < comments.length">load more</button>
+
+            currentPage: 1,
+            maxPerPAge: 3
+            totalResults: 0,
+
+        computed: {
+            paginatedComments: function () {
+                return this.comments.slice(0, this.currentPage * this.maxPerPage)
             },
-            loadCurrentUser: function() {
-                axios({
-                    method: 'get',
-                    url: '/apis/v1/currentuser/'
-                }).then(response => {
-                    this.user = response.data
-                })
+            totalResults() {
+                return Object.keys(this.comments).length
             },
-            newPost: function () {
+            pageCount() {
+                return Math.ceil(this.totalResults / this.maxPerPage)
+            },
+            pageOffest() {
+                return this.maxPerPage * this.currentPage
+            }
+        }
+
+
+
+
+            loadComments: function () {
                 axios({
-                    method: 'post',
-                    url: '/apis/v1/posts/',
-                    headers: {
-                        'X-CSRFToken': this.csrf_token
-                    },
-                    data: {
-                        "user_name": this.user.id,
-                        "description": this.newPostWords,
-                        "pic": this.selectedFile,
-                        "tags": this.tags
+                    method: 'GET',
+                    url: `/apis/v1/comments/`,
+                    params: {
+                        filter: this.filter,
+                        type: this.selection,
+                        page: this.page,
+                        _limit: 3
                     }
                 }).then(response => {
-                    this.newPostWords = ''
-                    this.loadPosts()
+                    this.comments = response.data
                 })
-            }
-        },
-        created: function () {
-            this.loadCurrentUser()
-        },
-        mounted: function () {
-            this.csrf_token = document.querySelector("input[name=csrfmiddlewaretoken]").value;
-        }
-}),
+            },
+            loadMoreComments: function () {
+                axios({
+                    method: 'GET',
+                    url: '/apis/v1/comments/'
+                }).then(response => {
+                    this.comments.push(response.data.results[0])
+                })
+            },

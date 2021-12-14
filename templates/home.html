@@ -22,65 +22,146 @@
 {% endif %}
 
 <div id="app">
-    <h1> [[ message ]] </h1>
+    <h1> [[ message ]] </h1> 
+    <img src='{% static "images/tardis.jpg" %}' @click="searchPoints++" class='tard'>
+    <div v-if="searchPoints > 4">
+        <input type="text" v-model="searchTerm" placeholder="Enter search term" v-on:keyup.enter="searchPosts">
+        <select v-model="selection">
+            <option value="lookUp"> Search Tag (just one)</option> 
+            <option value="userSearch">Search Usernames (exact name)</option>
+            <option value="">Search Whole Site</option>
+        </select>
+        <button @click="searchPosts">Find it!</button>
+        <button @click="loadPosts">Back to homepage</button>
         <button-counter class="reveal" :user="user" :csrf_token='csrf_token' @post-created1="afterPostCreated()"></button-counter> <br>
-    <div v-for="post in posts" :key="posts.id">
-        <div class="flex-container"> 
-            <div>Posted by: [[ post.posted_by['username'] ]] </div>
-            <div>[[ formattingDates(post.date_posted) ]]</div>
-            <div v-if="post.posted_by.is_adult == true">This creator is an adult </div>
-        </div>
-        <div v-if="post.posted_by.username == user.username">
-            <button @click="deletePost(post)" class="delete">Delete Post</button>
-        </div>
-        <img :src="post.pic">
-        
-        <button-like :user="user" :post="post" :csrf_token='csrf_token' @post-liked="afterPostLiked()"></button-like>
+    </div>
 
-        <span class="description"> 
-            [[ post.description ]] <br>
-            Tags: [[ post.tags ]]
-        </span>
-        <hr>
-        <div v-for="comment in post.comments"> 
-            <div class="flex-container">
-                <div>[[ comment.posted_by.username ]] says:</div>
-                <div v-if="comment.posted_by.is_creator == true">Creator Status: Active</div>
-                <div v-if="comment.posted_by.is_adult == true">This creator is an adult</div>
+    <div v-if="searchPoints > 2">
+        <div v-if="board == false" v-for="post in posts" :key="posts.id">
+            <div class="flex-container"> 
+                <div>Posted by: [[ post.posted_by['username'] ]] </div>
+                <div>[[ formattingDates(post.date_posted) ]]</div>
+                <div v-if="post.posted_by.is_adult == true">This creator is an adult </div>
             </div>
-            <div class="flex-container">
-                <i><div>[[ comment['comment'] ]]</div></i>
-                <div>[[ formattingDates(comment.comment_date) ]]</div>
+            <div v-if="post.posted_by.username == user.username">
+                <button @click="deletePost(post)" class="delete">Delete Post</button>
             </div>
-            <div v-if="comment.posted_by.username == user.username">
-                <button @click="deleteComment(comment)" class="delete">Delete Comment</button>
-            </div> 
-            <br>
-        </div>
-        {% comment %} <button @click="loadMoreComments()" class="morecomments">Load more comments</button> {% endcomment %}
-        <div>
-            <textarea cols="50" rows="2"v-model="currentComment" placeholder="Comments go here (max length 600 characters)" v-on:keyup.enter="submitComment(post)"></textarea>
-            <button @click="submitComment(post)" class="submit">Submit</button>
+            <img :src="post.pic">
+            
+            <button-like :user="user" :post="post" :csrf_token='csrf_token' @post-liked="afterPostLiked()"></button-like>
+            <span class="description"> 
+                [[ post.description ]] <br>
+                Tags: [[ post.tags ]]
+            </span>
+            <hr>
+            <comment-section :user="user" :post='post' :comments='comments' :csrf_token='csrf_token' @comment-posted="afterCommentPosted()"></comment-section>
         </div>
     </div>
+    <p v-if="posts.length == 0">No results found</p>
+    <button v-if="posts.length == 0" @click="loadPosts">Back to homepage</button>
+
+
+
 
 </div>
 <script src="https://cdn.jsdelivr.net/npm/vue@2/dist/vue.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
 <script>
 
+    Vue.component('comment-section', {
+        delimiters: ['[[', ']]'],
+        props: [ 'user', 'comments', 'csrf_token', 'post' ],
+        data: function () {
+            return {
+            currentPage: 1,
+            maxPerPage: 3,
+            currentComment: '',
+            }
+        },
+        template: `
+        <div>
+            <div v-for="(comment, index) in paginatedComments" :key="index"> 
+                <div class="flex-container">
+                    <div>[[ comment.posted_by.username ]] says:</div>
+                    <div v-if="comment.posted_by.is_creator == true">Creator Status: Active</div>
+                    <div v-if="comment.posted_by.is_adult == true">This creator is an adult</div>
+                </div>
+                <div class="flex-container">
+                    <i><div>[[ comment['comment'] ]]</div></i>
+                    <div>[[ formattingDates1(comment.comment_date) ]]</div>
+                </div>
+                <div v-if="comment.posted_by.username == user.username">
+                    <button @click="deleteComment(comment)" class="delete">Delete Comment</button>
+                </div> 
+                <br>
+            </div>
+            <button @click="loadMore" v-if="currentPage * maxPerPage < comments.length">load more</button>
+            <div>
+                <textarea cols="50" rows="2"v-model="currentComment" placeholder="Comments go here (max length 600 characters)" v-on:keyup.enter="submitComment(post)"></textarea>
+                <button @click="submitComment(post)" class="submit">Submit</button>
+            </div>
+        </div>
+        `,
+        methods: {
+            loadMore() {
+                this.currentPage += 1
+            },
+            deleteComment: function (comment) {
+                axios({
+                    method: 'delete',
+                    url: `/apis/v1/comments/${comment.id}/`,
+                    headers: {
+                        'X-CSRFToken': this.csrf_token
+                    },
+                }).then(response => {
+                    this.$emit("comment-posted")
+                })
+            },
+            formattingDates1: function (date) {
+                let dateObj = new Date(date)
+                let options = { weekday: 'short', year: 'numeric', month: 'short', day: 'numeric', hour: 'numeric', minute: 'numeric' }
+                let newformat=dateObj.toLocaleString('en-US', options)
+                console.log(typeof(dateObj))
+                return newformat
+            },
+            submitComment: function (post) {
+                axios({
+                    method: 'post',
+                    url: '/apis/v1/comments/',
+                    headers: {
+                        'X-CSRFToken': this.csrf_token
+                    },
+                    data: {
+                            "post": post.id,
+                            "user_name": this.user.id,
+                            "comment": this.currentComment
+                    }
+                }).then(response => {
+                    this.currentComment = ''
+                    this.$emit("comment-posted")
+                })
+            },
+        },
+        computed: {
+            paginatedComments: function () {
+                return this.post.comments.slice(0, this.currentPage * this.maxPerPage)
+            }
+        }
+    })
+
+
     Vue.component('button-counter', {
         delimiters: ['[[', ']]'],
         props: [ 'user', 'csrf_token' ],
         data: function () {
             return {
-            count: 0,
+            count: 5,
             isHidden: true,
             }
         },
         template: `<div>
-        <button v-on:click="count++">You clicked me [[ count ]] times</button>
-        <button v-if="count > 4" @click="isHidden = !isHidden" class="reveal" style="animation-delay:0.07s">Click to make a new post</button>
+        <button v-on:click="count--">Hit me if you want to Post [[ count ]]</button>
+        <button v-if="count < 1" @click="isHidden = !isHidden" class="reveal" style="animation-delay:0.07s">Click to make a new post</button>
         <new-post v-if="!isHidden" :user="user" :csrf_token='csrf_token' @post-created="$emit('post-created1'), isHidden=true"  class="submission"></new-post>
         </div>`
         })
@@ -101,7 +182,11 @@
         `,
         methods: {
         submitlike: function() {
+            if (this.user.likes.includes(this.post.id)){
+                this.user.likes.splice(this.user.likes.indexOf(this.post.id),1)
+            } else {
                 this.user.likes.push(this.post.id)
+            }
             axios({
                 method: 'patch',
                 url: `/apis/v1/users/${this.user.id}/`,
@@ -173,18 +258,20 @@
         el: "#app",
         delimiters: ['[[', ']]'],
         data: {
+            board: false,
             id: {},
             comments: [],
-            currentComment: '',
             created_at: new Date().toISOString().slice(0,10),
             csrf_token: "",
-            filter: '',
-            page: 1,
-            selection: "",
             message: "Kosupure: Refuge for the cosplayers",
             posts: [],
             user: [],
             isHidden: true,
+            searchTerm: '',
+            commentSearch: '',
+            descriptionSearch: '',
+            selection: 'lookUp',
+            searchPoints: 0,
         },
         methods: {
             loadCurrentUser: function() {
@@ -198,13 +285,28 @@
             loadPosts: function () {
                 axios({
                     method: 'GET',
+                    url: '/apis/v1/posts/'
+                }).then(response => {
+                    this.posts = response.data.reverse()
+                })
+            },
+            searchPosts: function () {
+                let para
+                if (this.selection === 'lookUp') {
+                    para={
+                        tags: this.searchTerm
+                    }} else if (this.selection === 'userSearch') {
+                        para={
+                            user_name__username: this.searchTerm
+                        }} else {
+                            para={
+                                search: this.searchTerm
+                            }
+                        }
+                axios({
+                    method: 'GET',
                     url: '/apis/v1/posts/',
-                    params: {
-                        filter: this.filter,
-                        type: this.selection,
-                        page: this.page,
-                        _limit: 3
-                    }
+                    params: para 
                 }).then(response => {
                     this.posts = response.data.reverse()
                 })
@@ -223,23 +325,9 @@
             loadComments: function () {
                 axios({
                     method: 'GET',
-                    url: `/apis/v1/comments/`,
-                    params: {
-                        filter: this.filter,
-                        type: this.selection,
-                        page: this.page,
-                        _limit: 3
-                    }
+                    url: `/apis/v1/comments/`
                 }).then(response => {
                     this.comments = response.data
-                })
-            },
-            loadMoreComments: function () {
-                axios({
-                    method: 'GET',
-                    url: '/apis/v1/comments/'
-                }).then(response => {
-                    this.comments.push(response.data.results[0])
                 })
             },
             formattingDates: function (date) {
@@ -248,23 +336,6 @@
                 let newformat=dateObj.toLocaleString('en-US', options)
                 console.log(typeof(dateObj))
                 return newformat
-            },
-            submitComment: function (post) {
-                axios({
-                    method: 'post',
-                    url: '/apis/v1/comments/',
-                    headers: {
-                        'X-CSRFToken': this.csrf_token
-                    },
-                    data: {
-                            "post": post.id,
-                            "user_name": this.user.id,
-                            "comment": this.currentComment
-                    }
-                }).then(response => {
-                    this.currentComment = ''
-                    this.loadPosts()
-                })
             },
             deletePost: function (post) {
                 axios({
@@ -277,22 +348,14 @@
                     this.loadPosts()
                 })
             },
-            deleteComment: function (comment) {
-                axios({
-                    method: 'delete',
-                    url: `/apis/v1/comments/${comment.id}/`,
-                    headers: {
-                        'X-CSRFToken': this.csrf_token
-                    },
-                }).then(response => {
-                    this.loadPosts()
-                })
-            },
             afterPostCreated: function () {
                 this.loadPosts()
                 this.isHidden = true
             },
             afterPostLiked: function () {
+                this.loadPosts()
+            },
+            afterCommentPosted: function () {
                 this.loadPosts()
             }
         },
@@ -307,8 +370,7 @@
         mounted: function () {
             this.csrf_token = document.querySelector("input[name=csrfmiddlewaretoken]").value
             this.getMorePosts()
-        }
-        
+        }        
     })
 
 </script>

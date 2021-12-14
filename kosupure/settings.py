@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     'users.apps.UsersConfig',
     'feed.apps.FeedConfig',
     'rest_framework',
+    'django_filters',
     'apis',
 ]
 
