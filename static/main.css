@@ -9,9 +9,15 @@ body {
     color: white;
 }
 
-header, h1 {
+header, h1, header2 {
     font-family: papyrus;
     font-variant: small-caps;
+    text-align: center;
+}
+
+.hrbig {
+    border-width: .3rem;
+    border-color: rgba(0, 219, 248, 0.815);
 }
 
 .tophr {

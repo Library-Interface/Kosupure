@@ -23,5 +23,6 @@ urlpatterns = [
     path('users/', include('users.urls')),
     path('apis/v1/', include('apis.urls')),
     path('api-auth/', include('rest_framework.urls')),
-    path('', TemplateView.as_view(template_name='home.html'), name='home')
+    path('', TemplateView.as_view(template_name='home.html'), name='home'),
+    path('board/', TemplateView.as_view(template_name='board.html'), name='board')
 ]

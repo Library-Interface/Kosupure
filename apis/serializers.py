@@ -31,9 +31,11 @@ class PostSerializer(serializers.ModelSerializer):
     comments = NestedCommentSerializer(many=True, read_only=True, source='details')
     posted_by = NestedUserSerializer(many=False, read_only=True, source='user_name')
     liked_detail = NestedUserSerializer(many=True, read_only=True, source='liked_by')
+
     class Meta:
         model = models.Post
         fields = (
+            'adult_content',
             'id',
             'comments',
             'user_name',
