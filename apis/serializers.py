@@ -22,10 +22,23 @@ class NestedCommentSerializer(serializers.ModelSerializer):
             'posted_by',
         )
 
+class NestedEventSerializer(serializers.ModelSerializer):
+    event = NestedUserSerializer(many=False, read_only=True, source='events')
+    class Meta:
+        model = models.Events
+        fields = (
+            'event',
+            'id', 
+            'user', 
+            'name', 
+            'description', 
+            'date',
+        )
+
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = get_user_model()
-        fields = ('id', 'username', 'email', 'website', 'biography', 'is_creator', 'is_adult', 'profile_pic', 'likes')
+        fields = ('id', 'username', 'email', 'website', 'biography', 'is_creator', 'is_adult', 'profile_pic', 'likes', 'attending_events')
 
 class PostSerializer(serializers.ModelSerializer):
     comments = NestedCommentSerializer(many=True, read_only=True, source='details')
@@ -61,11 +74,15 @@ class CommentSerializer(serializers.ModelSerializer):
             'comment',
         )
 
-# class LikeSerializer(serializers.ModelSerializer):
-#     class Meta:
-#         model = models.Like
-#         fields = (
-#             'id',
-#             'user',
-#             'post',
-#         )
+class EventSerializer(serializers.ModelSerializer):
+    attending_details = NestedUserSerializer(many=True, read_only=True, source='attending')
+    class Meta:
+        model = models.Events
+        fields = (
+            'id', 
+            'user', 
+            'name', 
+            'description', 
+            'date',
+            'attending_details',
+            )

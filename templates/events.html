@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{% static 'main.css' %}">
+    <title>Kosupure</title>
+</head>
+
+<body>
+{% csrf_token %}
+{% if user.is_authenticated %}
+    <header>
+        <h1>Welcome to Kosupure, {{ user.username }}! <span><a href="{% url 'logout' %}" class="logout">Logout ?</a></span></h1>
+        <h2><a href="{% url 'home' %}">Kosupure Posts</a></h2>
+        <h2><a href="{% url 'game' %}">Idle Game</a></h2>
+        <hr class="tophr">
+    </header>
+{% else %}
+    <header2>
+        <h1>Welcome to Kosupure, visitor!</h1>
+        <h2>You are not logged in. <a href="{% url 'login' %}" class="logout">Login</a> <a href="{% url 'users:signup' %}" class="logout">Sign Up</a></h2>
+        <h2><a href="{% url 'home' %}">Kosupure Posts</a></h2>
+        <h2><a href="{% url 'game' %}">Idle Game</a></h2>
+    </header2>
+{% endif %}
+
+<div id="events">
+    <div v-if="user.is_creator">
+    <new-event class="container" :user="user" :csrf_token="csrf_token" @event-created="afterEventCreated()"></new-event>
+    </div>
+    <br><br>
+    <div v-for="event in events" :key="events.id">
+        <div class="flex-container">
+            <div class="events">   
+                <h3>Event Name: [[ event.name ]] </h3>
+                <h4>[[ formattingDates(event.date) ]] </h4>
+                <h4>[[ event.description ]] </h4>
+                <hr>
+                <button-attend :user="user" :events="event" :csrf_token='csrf_token' @event-attend="afterEventAttend()"></button-attend>
+            <br>
+            </div>
+        </div>
+    </div>
+
+</div>
+<script src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/16327/gsap-latest-beta.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/vue@2/dist/vue.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+<script>
+
+Vue.component('new-event', {
+    delimiters: ['[[', ']]'],
+    props: [ 'user', 'csrf_token' ],
+    data: function () {
+        return {
+        name:  '',
+        date: '',
+        description: '',
+    }},
+    template: `
+    <form enctype="multipart/form-data">
+        <textarea cols="75" rows="1" placeholder="Enter name of event" v-model="name" required></textarea><br>
+        <textarea cols="75" rows="3" placeholder="Enter description of event here" v-model="description"></textarea><br>
+        <input type="datetime-local" placeholder="Date" v-model="date">
+        <button @click.prevent="newEvent" class="submit">Submit</button>
+    </form>
+    `,
+    methods: {
+        onFileChanged (event) {
+            console.log(event)
+            this.selectedFile = event.target.files[0]
+        },
+        newEvent: function () {
+            {% comment %} console.log(this.date)
+            let date = new Date(this.date)
+            console.log(date) {% endcomment %}
+            let formData = new FormData()
+            formData.append('user', this.user.id)
+            formData.append('name', this.name)
+            formData.append('description', this.description)
+            formData.append('date', this.date)
+            axios({
+                method: 'post',
+                url: '/apis/v1/events/',
+                headers: {
+                    'X-CSRFToken': this.csrf_token
+                },
+                data: formData
+            }).then(response => {
+                this.name = ''
+                this.description = ''
+                this.$emit("event-created")
+            })
+        }
+    },
+})
+
+Vue.component('button-attend', {
+    delimiters: ['[[', ']]'],
+    props: [ 'user', 'csrf_token', 'events' ],
+    data: function () {
+        return {
+        attend: [],
+        }
+    },
+    template: `
+    <div class='flex-container'>
+        <div @click="submitAttend" class="heartbutton"> 🧑‍🤝‍🧑[[ countattend ]] 🧑‍🤝‍🧑</div>
+        <div class="attending"> 🧑‍🤝‍🧑 attending: <template v-for="attend in events.attending_details"> [[ attend.username ]], </template></div>
+    </div>
+    `,
+    methods: {
+    submitAttend: function() {
+        console.log(events)
+        if (this.user.attending_events.includes(this.events.id)){
+            this.user.attending_events.splice(this.user.attending_events.indexOf(this.events.id),1)
+        } else {
+            this.user.attending_events.push(this.events.id)
+        }
+        axios({
+            method: 'patch',
+            url: `/apis/v1/users/${this.user.id}/`,
+            headers: {
+                'X-CSRFToken': this.csrf_token
+            },
+            data: {
+                "attending_events": this.user.attending_events,
+            }
+        }).then(response => {
+            this.attend = response.data
+            this.$emit("event-attend")
+        })
+    },
+    },
+    computed: {
+        countattend: function () {
+            if (!(this.events.attending_details === [])){
+                return this.events.attending_details.length
+        }}
+    }
+})
+
+    const app = new Vue({
+        el: "#events",
+        delimiters: ['[[', ']]'],
+        data: {
+            events: [],
+            user: [],
+            csrf_token: "",
+        },      
+        methods: {
+            loadCurrentUser: function() {
+                axios({
+                    method: 'get',
+                    url: '/apis/v1/currentuser/'
+                }).then(response => {
+                    this.user = response.data
+                })
+            },
+            loadEvents: function () {
+                axios({
+                    method: 'GET',
+                    url: '/apis/v1/events/'
+                }).then(response => {
+                    this.events = response.data.reverse()
+                    console.log(events)
+                })
+            },
+            deleteEvent: function (event) {
+                axios({
+                    method: 'delete',
+                    url: `/apis/v1/events/${event.id}/`,
+                    headers: {
+                        'X-CSRFToken': this.csrf_token
+                    },
+                }).then(response => {
+                    this.loadEvents()
+                })
+            },
+            afterEventCreated: function () {
+                this.loadEvents()
+            },
+            afterEventAttend: function () {
+                this.loadEvents()
+            },
+            formattingDates: function (date) {
+                let dateObj = new Date(date)
+                let options = { weekday: 'short', year: 'numeric', month: 'short', day: 'numeric', hour: 'numeric', minute: 'numeric' }
+                let newformat=dateObj.toLocaleString('en-US', options)
+                console.log(typeof(dateObj))
+                return newformat
+            },
+        },
+        created: function () {
+            this.loadEvents()
+            this.loadCurrentUser()
+        },
+        mounted: function () {
+            this.csrf_token = document.querySelector("input[name=csrfmiddlewaretoken]").value
+        },
+    })
+
+</script>
+</body>

@@ -28,9 +28,12 @@ class Comments(models.Model):
 	comment = models.CharField(max_length=600)
 	comment_date = models.DateTimeField(default=timezone.now)
 
-# class Like(models.Model):
-# 	user = models.ForeignKey(get_user_model(), related_name='likes', on_delete=models.SET(get_deleted_user_instance))
-# 	post = models.ForeignKey(Post, related_name='likes', on_delete=models.CASCADE)
+class Events(models.Model):
+	user = models.ForeignKey(get_user_model(), related_name='events', on_delete=models.SET(get_deleted_user_instance))
+	name = models.CharField(max_length=200)
+	description = models.CharField(max_length=300, blank=True, null=True)
+	date = models.DateTimeField()
+	attending = models.ManyToManyField(get_user_model(), related_name="attending_events", blank=True)
 
-# 	def __str__(self):
-# 		return f'{self.post} {self.user}'
+	def __str__(self):
+		return self.name

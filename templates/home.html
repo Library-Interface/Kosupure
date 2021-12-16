@@ -14,14 +14,16 @@
 {% if user.is_authenticated %}
     <header>
         <h1>Welcome to Kosupure, {{ user.username }}! <span><a href="{% url 'logout' %}" class="logout">Logout ?</a></span></h1>
-        <h2><a href="{% url 'board' %}">Boards</a><h2>
+        <h2><a href="{% url 'events' %}">Events</a></h2>
+        <h2><a href="{% url 'game' %}">Idle Game</a></h2>
         <hr class="tophr">
     </header>
 {% else %}
     <header2>
         <h1>Welcome to Kosupure, visitor!</h1>
         <h2>You are not logged in. <a href="{% url 'login' %}" class="logout">Login</a> <a href="{% url 'users:signup' %}" class="logout">Sign Up</a></h2>
-        <h2><a href="{% url 'board' %}">Boards</a><h2>
+        <h2><a href="{% url 'events' %}">Events</a></h2>
+        <h2><a href="{% url 'game' %}">Idle Game</a></h2>
     </header2>
 {% endif %}
 
@@ -31,7 +33,7 @@
     <h1>Tardis departing in [[ timerCount ]]</h1>
     </div>
     <div v-if="searchPoints > 2">
-        <h1 @click="tok = tok ? false : true"> [[ message ]] </h1> 
+        <h1 @click="tok = tok ? false : true" class="refuge"> [[ message ]] </h1> 
         <input type="text" v-model="searchTerm" placeholder="Enter search term" v-on:keyup.enter="searchPosts">
         <select v-model="selection">
             <option value="lookUp"> Search Tag (just one)</option> 
@@ -40,7 +42,7 @@
         </select>
         <button @click="searchPosts">Find it!</button>
         <button @click="loadPosts">Back to homepage</button>
-        <button-counter class="reveal" :user="user" :csrf_token='csrf_token' @post-created1="afterPostCreated()"></button-counter> <br>
+        <button-counter  v-if="user.is_creator" class="reveal" :user="user" :csrf_token='csrf_token' @post-created1="afterPostCreated()"></button-counter> <br>
     </div>
 
     <aside v-show="tok">
@@ -48,7 +50,7 @@
     </aside>
 
     <div v-if="searchPoints > 0">
-        <div v-if="user.is_adult == false" v-for="post in filteredAdult" :key="posts.id">
+        <div v-if="!user.is_adult" v-for="post in filteredAdult" :key="posts.id">
             <div class="flex-container"> 
                 <div @click="showUser(post.posted_by['username'])"> Posted by: [[ post.posted_by['username'] ]] </div>
                 <div>[[ formattingDates(post.date_posted) ]]</div>
@@ -67,7 +69,7 @@
             <comment-section :user="user" :post='post' :comments='comments' :csrf_token='csrf_token' @comment-posted="afterCommentPosted()"></comment-section>
             <hr class="hrbig">
         </div>
-        <div v-if="user.is_adult == true" v-for="post in posts" :key="posts.id">
+        <div v-if="user.is_adult" v-for="post in posts" :key="posts.id">
             <div class="flex-container"> 
                 <div @click="showUser(post.posted_by['username'])"> Posted by: [[ post.posted_by['username'] ]] </div>
                 <div>[[ formattingDates(post.date_posted) ]]</div>
@@ -125,7 +127,7 @@
                 <br>
             </div>
             <div v-if="currentPage * maxPerPage < post.comments.length"><button @click="loadMore" >load more</button></div>
-            <div>
+            <div v-if="user.id">
                 <textarea cols="50" rows="2"v-model="currentComment" placeholder="Comments go here (max length 600 characters)" v-on:keyup.enter="submitComment(post)"></textarea>
                 <button @click="submitComment(post)" class="submit">Submit</button>
             </div>
@@ -250,13 +252,13 @@
             kid_safe: false,
         }},
         template: `
-        <<form enctype="multipart/form-data">
+        <form enctype="multipart/form-data">
             <textarea cols="100" rows="3" placeholder="Enter description of the image here (max length 800 characters)" v-model="newPostWords" required></textarea>
             <textarea cols="100" rows="2" placeholder="Enter Tags for the image here (max length 400 characters)" v-model="tags"></textarea><br>
             <input type="file" accept="image/*" @change=onFileChanged class="choosefile">
             <h2>This post is safe for kids (no blood, gore, etc): <input type="checkbox" id="checkbox" v-model="kid_safe"><label for="checkbox">[[ kid_safe ? 'I certify this is safe for kids': 'This is for adults' ]]</label></h2>
             <button @click.prevent="newPost" class="submit">Submit</button>
-        </form>>
+        </form>
         `,
         methods: {
             onFileChanged (event) {

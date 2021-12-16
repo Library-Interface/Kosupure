@@ -4,7 +4,9 @@ from django.contrib.auth import get_user_model
 from rest_framework.decorators import permission_classes
 from django_filters.rest_framework import DjangoFilterBackend
 
-from .serializers import UserSerializer, PostSerializer, CommentSerializer
+from apis.permissions import isCreatorOrReadOnly
+from rest_framework import permissions
+from .serializers import UserSerializer, PostSerializer, CommentSerializer, EventSerializer
 from feed import models
 
 class UserViewSet(viewsets.ModelViewSet):
@@ -31,7 +33,7 @@ class PostViewSet(viewsets.ModelViewSet):
         'tags',
         'user_name__username'
     ]
-
+    permission_classes = [isCreatorOrReadOnly]
 
 class CurrentPostView(generics.RetrieveAPIView):
     serializer_class = PostSerializer
@@ -43,15 +45,17 @@ class CurrentCommentView(generics.RetrieveAPIView):
     def get_object(self):
         return self.request.user
 
+class CurrentEventView(generics.RetrieveAPIView):
+    serializer_class = EventSerializer
+    def get_object(self):
+        return self.request.user
+
+class EventViewSet(viewsets.ModelViewSet):
+    queryset = models.Events.objects.all()
+    serializer_class = EventSerializer
+    permission_classes = [isCreatorOrReadOnly]
+
 class CommentViewSet(viewsets.ModelViewSet):
     queryset = models.Comments.objects.all()
     serializer_class = CommentSerializer
-
-# class LikeViewSet(viewsets.ModelViewSet):
-#     queryset = models.Like.objects.all()
-#     serializer_class = LikeSerializer
-
-# class CurrentLikeView(generics.RetrieveAPIView):
-#     serializer_class = LikeSerializer
-#     def get_object(self):
-#         return self.request.user
+    permission_classes = [permissions.IsAuthenticatedOrReadOnly]

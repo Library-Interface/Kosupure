@@ -15,6 +15,24 @@ header, h1, header2 {
     text-align: center;
 }
 
+a:link, a:visited {
+    background-color: rgba(0, 219, 248, 0.815);
+    color: white;
+    padding: 4px 5px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+}
+
+a:hover, a:active {
+    background-color: red;
+}
+
+.refuge:hover {
+    background-color: rgb(49, 49, 49, 0.3);
+    font-size: 2.1rem;
+}
+
 .hrbig {
     border-width: .3rem;
     border-color: rgba(0, 219, 248, 0.815);
@@ -163,12 +181,147 @@ input[type=submit] {
     border-color: rgba(255,255,255,1);
 }
 
+.container {
+    font-size: 16px;
+    font-size: max(16px, 1em);
+    font-family: inherit;
+    padding: 0.25em 0.5em;
+    background-color: rgba(255, 255, 255, 0.815);
+    border: 2px solid ;
+    border-radius: 4px;
+    transition: 180ms box-shadow ease-in-out;
+}
 
+.container:hover {
+    border-color: rgba(0, 219, 248, 0.815) ;
+    box-shadow: 0 0 0 3px rgba(0, 219, 248, 0.815);
+    outline: 3px solid transparent;
+}
 
+.events {
+    text-align: center;
+    width: 75%;
+    margin: auto;
+    background-color: rgba(0, 0, 0, 0.815);
+    border: 2px solid ;
+    border-radius: 4px;
+    transition: 180ms box-shadow ease-in-out;
+}
+
+.events:hover {
+    border-color: rgba(0, 219, 248, 0.815) ;
+    box-shadow: 0 0 0 3px rgba(0, 219, 248, 0.815);
+    outline: 3px solid transparent;
+}
 
 .tard {
     width: 20vw;
     display: block;
     margin-left: auto;
     margin-right: auto;
+}
+
+.attending {
+    display: flex;
+    flex-wrap: wrap;
+    width: 70%;
+}
+
+.imageContainer img {
+    height: 220px;
+    width: auto;
+}
+
+
+
+
+#bag {
+    height: 500px;
+    max-width: 1200px;
+    margin: 5px;
+    background: url(images/asteroidbag.jpg) center no-repeat;
+    background-size: 80%;
+}
+
+#bag.burst1 {
+background: url(images/asteroidburst1.png) center no-repeat;
+background-size: 80%;
+margin: 5px;
+}
+
+#bag.burst2 {
+background: url(images/asteroidburst2.png) center no-repeat;
+background-size: 80%
+}
+
+#bag.burst3 {
+background: url(images/asteroidburst3.png) center no-repeat;
+background-size: 80%
+}
+
+#bag.burst4 {
+background: url(images/asteroidburst4.png) center no-repeat;
+background-size: 80%
+}
+
+#bag.burst5 {
+background: url(images/asteroidburst5.png) center no-repeat;
+background-size: 80%
+}
+
+#bag.burst6 {
+background: url(images/asteroidburst6.png) center no-repeat;
+background-size: 80%
+}
+
+#bag.burst7 {
+background: url(images/images/asteroidburst7.png) center no-repeat;
+background-size: 80%
+}
+
+#bag.burst8 {
+background: url(images/asteroidburst8.png) center no-repeat;
+background-size: 80%
+}
+
+#bag.burst9 {
+background: url(images/asteroidburst9.png) center no-repeat;
+background-size: 80%
+}
+
+#bag.burst {
+background: url(images/ended.png) center no-repeat;
+background-size: 80%;
+}
+
+#bag-health {
+width: 500px;
+border: 2px solid #000;
+margin: 0 auto 20px auto;
+border: chocolate solid 3px;
+}
+
+#bag-health div {
+height: 20px;
+background: crimson;
+}
+
+#controls {
+width: 500px;
+margin: 0 auto;
+}
+
+#controls button {
+font-size: 75px;
+color: red;
+background: black;
+}
+
+.gloombutton {
+    font-size: 20px;
+    background-color: aqua;
+}
+
+.gloombutton:hover {
+    background-color: rgb(0, 225, 255);
 }
