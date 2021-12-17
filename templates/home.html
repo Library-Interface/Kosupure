@@ -14,16 +14,22 @@
 {% if user.is_authenticated %}
     <header>
         <h1>Welcome to Kosupure, {{ user.username }}! <span><a href="{% url 'logout' %}" class="logout">Logout ?</a></span></h1>
-        <h2><a href="{% url 'events' %}">Events</a></h2>
-        <h2><a href="{% url 'game' %}">Idle Game</a></h2>
+        <h2>
+            <a href="{% url 'events' %}">Events</a>
+            <a href="{% url 'game' %}">Idle Game</a>
+            <a href="{% url 'board' %}">Board</a>
+        </h2>
         <hr class="tophr">
     </header>
 {% else %}
     <header2>
         <h1>Welcome to Kosupure, visitor!</h1>
         <h2>You are not logged in. <a href="{% url 'login' %}" class="logout">Login</a> <a href="{% url 'users:signup' %}" class="logout">Sign Up</a></h2>
-        <h2><a href="{% url 'events' %}">Events</a></h2>
-        <h2><a href="{% url 'game' %}">Idle Game</a></h2>
+        <h2>
+            <a href="{% url 'events' %}">Events</a>
+            <a href="{% url 'game' %}">Idle Game</a>
+            <a href="{% url 'board' %}">Board</a>
+        </h2>
     </header2>
 {% endif %}
 
@@ -249,14 +255,20 @@
             tags: '',
             pic: '',
             selectedFile: null,
-            kid_safe: false,
+            adult_content: true,
         }},
         template: `
         <form enctype="multipart/form-data">
             <textarea cols="100" rows="3" placeholder="Enter description of the image here (max length 800 characters)" v-model="newPostWords" required></textarea>
+            <br>
+            <span class="limiter">[[ charactersLeft ]]</span>
+            <br>
             <textarea cols="100" rows="2" placeholder="Enter Tags for the image here (max length 400 characters)" v-model="tags"></textarea><br>
+            <br>
+            <span class="limiter">[[ charactersLeftTags ]]</span>
+            <br>
             <input type="file" accept="image/*" @change=onFileChanged class="choosefile">
-            <h2>This post is safe for kids (no blood, gore, etc): <input type="checkbox" id="checkbox" v-model="kid_safe"><label for="checkbox">[[ kid_safe ? 'I certify this is safe for kids': 'This is for adults' ]]</label></h2>
+            <h2>This post is safe for kids (no blood, gore, etc): <input type="checkbox" id="checkbox" v-model="adult_content"><label for="checkbox">[[ adult_content ? 'Uncheck box to certify image is safe for kids': 'check box if image is for adults' ]]</label></h2>
             <button @click.prevent="newPost" class="submit">Submit</button>
         </form>
         `,
@@ -271,7 +283,7 @@
                 formData.append('description', this.newPostWords)
                 formData.append('pic', this.selectedFile)
                 formData.append('tags', this.tags)
-                formData.append('kid_safe', this.kid_safe)
+                formData.append('adult_content', this.adult_content)
                 axios({
                     method: 'post',
                     url: '/apis/v1/posts/',
@@ -286,6 +298,16 @@
                 })
             }
         },
+        computed: {
+            charactersLeft: function () {
+                let char = this.newPostWords.length, limit = 800
+                return (limit - char) + " / " + limit + " " + "characters remaining"
+            },
+            charactersLeftTags: function () {
+                let char1 = this.tags.length, limit = 400
+                return (limit - char1) + " / " + limit + " " + "characters remaining"
+            }
+        }
 })
 
     const app = new Vue({

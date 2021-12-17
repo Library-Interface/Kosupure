@@ -28,6 +28,9 @@ class Comments(models.Model):
 	comment = models.CharField(max_length=600)
 	comment_date = models.DateTimeField(default=timezone.now)
 
+	def __str__(self):
+		return self.comment
+
 class Events(models.Model):
 	user = models.ForeignKey(get_user_model(), related_name='events', on_delete=models.SET(get_deleted_user_instance))
 	name = models.CharField(max_length=200)
@@ -37,3 +40,12 @@ class Events(models.Model):
 
 	def __str__(self):
 		return self.name
+
+class EventComments(models.Model):
+	events = models.ForeignKey(Events, related_name='comment_events', on_delete=models.CASCADE)
+	events_user = models.ForeignKey(get_user_model(), related_name='comment_events', on_delete=models.SET(get_deleted_user_instance))
+	event_comment = models.CharField(max_length=600)
+	event_comment_date = models.DateTimeField(default=timezone.now)
+
+	def __str__(self):
+		return self.event_comment

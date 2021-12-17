@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{% static 'main.css' %}">
+    <title>Kosupure</title>
+</head>
+
+<body>
+{% csrf_token %}
+{% if user.is_authenticated %}
+    <header>
+        <h1>Welcome to Kosupure, {{ user.username }}! <span><a href="{% url 'logout' %}" class="logout">Logout ?</a></span></h1>
+        <h2>
+            <a href="{% url 'home' %}">Kosupure Posts</a>
+            <a href="{% url 'game' %}">Idle Game</a>
+            <a href="{% url 'events' %}">Events</a></h2>
+        </h2>
+        <hr class="tophr">
+    </header>
+{% else %}
+    <header2>
+        <h1>Welcome to Kosupure, visitor!</h1>
+        <h2>You are not logged in. <a href="{% url 'login' %}" class="logout">Login</a> <a href="{% url 'users:signup' %}" class="logout">Sign Up</a></h2>
+        <h2>
+            <a href="{% url 'home' %}">Kosupure Posts</a>
+            <a href="{% url 'game' %}">Idle Game</a>
+            <a href="{% url 'events' %}">Events</a></h2>
+        </h2>
+    </header2>
+{% endif %}
+
+<div id="board">
+    
+
+</div>
+<script src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/16327/gsap-latest-beta.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/vue@2/dist/vue.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+<script>
+
+
+
+    const app = new Vue({
+        el: "#board",
+        delimiters: ['[[', ']]'],
+        data: {
+
+        },      
+        methods: {
+        }
+    })
+
+</script>
+</body>

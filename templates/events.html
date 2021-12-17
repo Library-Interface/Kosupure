@@ -14,16 +14,22 @@
 {% if user.is_authenticated %}
     <header>
         <h1>Welcome to Kosupure, {{ user.username }}! <span><a href="{% url 'logout' %}" class="logout">Logout ?</a></span></h1>
-        <h2><a href="{% url 'home' %}">Kosupure Posts</a></h2>
-        <h2><a href="{% url 'game' %}">Idle Game</a></h2>
+        <h2>
+            <a href="{% url 'home' %}">Kosupure Posts</a>
+            <a href="{% url 'game' %}">Idle Game</a>
+            <a href="{% url 'board' %}">Board</a>
+        </h2>
         <hr class="tophr">
     </header>
 {% else %}
     <header2>
         <h1>Welcome to Kosupure, visitor!</h1>
         <h2>You are not logged in. <a href="{% url 'login' %}" class="logout">Login</a> <a href="{% url 'users:signup' %}" class="logout">Sign Up</a></h2>
-        <h2><a href="{% url 'home' %}">Kosupure Posts</a></h2>
-        <h2><a href="{% url 'game' %}">Idle Game</a></h2>
+        <h2>
+            <a href="{% url 'home' %}">Kosupure Posts</a>
+            <a href="{% url 'game' %}">Idle Game</a>
+            <a href="{% url 'board' %}">Board</a>
+        </h2>
     </header2>
 {% endif %}
 
@@ -40,7 +46,11 @@
                 <h4>[[ event.description ]] </h4>
                 <hr>
                 <button-attend :user="user" :events="event" :csrf_token='csrf_token' @event-attend="afterEventAttend()"></button-attend>
-            <br>
+                <div v-if="event.posted_by.username == user.username">
+                    <button @click="deleteEvent(event)" class="delete">Delete Event</button>
+                </div>
+                <span> Contact [[ event.posted_by.username ]] for more details </span>
+                <event-comment-section :user="user" :event='event' :csrf_token='csrf_token' @event-comment-posted="afterEventCommentPosted()"></event-comment-section>
             </div>
         </div>
     </div>
@@ -64,6 +74,7 @@ Vue.component('new-event', {
     <form enctype="multipart/form-data">
         <textarea cols="75" rows="1" placeholder="Enter name of event" v-model="name" required></textarea><br>
         <textarea cols="75" rows="3" placeholder="Enter description of event here" v-model="description"></textarea><br>
+        <span class="limiter">[[ charactersLeft ]]</span><br>
         <input type="datetime-local" placeholder="Date" v-model="date">
         <button @click.prevent="newEvent" class="submit">Submit</button>
     </form>
@@ -96,6 +107,98 @@ Vue.component('new-event', {
             })
         }
     },
+    computed: {
+        charactersLeft: function () {
+            let char = this.description.length, limit = 300
+            return (limit - char) + " / " + limit + " " + "characters remaining"
+        }
+    }
+})
+
+Vue.component('event-comment-section', {
+    delimiters: ['[[', ']]'],
+    props: [ 'user', 'event', 'csrf_token'],
+    data: function () {
+        return {
+        currentPage: 1,
+        maxPerPage: 3,
+        currentComment: '',
+        }
+    },
+    template: `
+    <div>
+        <div v-for="eventcomment in paginatedEventComments" :key="eventcomment.id"> 
+            <div class="flex-container">
+                <div>[[ eventcomment.event_username.username ]] says:</div>
+            </div>
+            <div class="flex-container">
+                <i><div>[[ eventcomment['event_comment'] ]]</div></i>
+                <div>[[ formattingDates1(eventcomment.event_comment_date) ]]</div>
+            </div>
+            <div v-if="eventcomment.event_username.username == user.username">
+                <button @click="deleteComment(eventcomment)" class="delete">Delete Comment</button>
+            </div> 
+            <br>
+        </div>
+        <div v-if="currentPage * maxPerPage < event.comments.length"><button @click="loadMore" >load more</button></div>
+        <div v-if="user.id">
+            <textarea cols="50" rows="2" v-model="currentComment" 
+            placeholder="Comments go here (max length 600 characters)" 
+            v-on:keyup.enter="submitComment(eventcomment)"></textarea>
+            <br>
+            <span class="limiter">[[ charactersLeft ]]</span>
+            <button @click="submitComment(eventcomment)" class="submit">Submit</button>
+        </div>
+    </div>
+    `,
+    methods: {
+        loadMore() {
+            this.currentPage += 1
+        },
+        deleteComment: function (eventcomment) {
+            axios({
+                method: 'delete',
+                url: `/apis/v1/eventscomments/${eventcomment.id}/`,
+                headers: {
+                    'X-CSRFToken': this.csrf_token
+                },
+            }).then(response => {
+                this.$emit("event-comment-posted")
+            })
+        },
+        formattingDates1: function (date) {
+            let dateObj = new Date(date)
+            let options = { weekday: 'short', year: 'numeric', month: 'short', day: 'numeric', hour: 'numeric', minute: 'numeric' }
+            let newformat=dateObj.toLocaleString('en-US', options)
+            return newformat
+        },
+        submitComment: function (post) {
+            axios({
+                method: 'post',
+                url: '/apis/v1/eventscomments/',
+                headers: {
+                    'X-CSRFToken': this.csrf_token
+                },
+                data: {
+                        "events": this.event.id,
+                        "events_user": this.user.id,
+                        "event_comment": this.currentComment,
+                }
+            }).then(response => {
+                this.currentComment = ''
+                this.$emit("event-comment-posted")
+            })
+        },
+    },
+    computed: {
+        paginatedEventComments: function () {
+            return this.event.comments.slice(0, this.currentPage * this.maxPerPage)
+        },
+        charactersLeft: function () {
+            let char = this.currentComment.length, limit = 600
+            return (limit - char) + " / " + limit + " " + "characters remaining"
+        }
+    }
 })
 
 Vue.component('button-attend', {
@@ -108,8 +211,8 @@ Vue.component('button-attend', {
     },
     template: `
     <div class='flex-container'>
-        <div @click="submitAttend" class="heartbutton"> 🧑‍🤝‍🧑[[ countattend ]] 🧑‍🤝‍🧑</div>
-        <div class="attending"> 🧑‍🤝‍🧑 attending: <template v-for="attend in events.attending_details"> [[ attend.username ]], </template></div>
+        <div @click="submitAttend" class="heartbutton"> 🧑‍🤝‍🧑 Going: [[ countattend ]] 🧑‍🤝‍🧑</div>
+        <div class="attending"> 🧑‍🤝‍🧑 Users Going: <template v-for="attend in events.attending_details"> [[ attend.username ]], </template></div>
     </div>
     `,
     methods: {
@@ -186,6 +289,9 @@ Vue.component('button-attend', {
             afterEventAttend: function () {
                 this.loadEvents()
             },
+            afterEventCommentPosted: function () {
+                this.loadEvents()
+            },
             formattingDates: function (date) {
                 let dateObj = new Date(date)
                 let options = { weekday: 'short', year: 'numeric', month: 'short', day: 'numeric', hour: 'numeric', minute: 'numeric' }
@@ -197,6 +303,7 @@ Vue.component('button-attend', {
         created: function () {
             this.loadEvents()
             this.loadCurrentUser()
+            this.loadEventsComments()
         },
         mounted: function () {
             this.csrf_token = document.querySelector("input[name=csrfmiddlewaretoken]").value

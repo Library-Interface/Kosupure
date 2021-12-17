@@ -74,15 +74,33 @@ class CommentSerializer(serializers.ModelSerializer):
             'comment',
         )
 
+class EventsCommentsSerializer(serializers.ModelSerializer):
+    event_username = NestedUserSerializer(many=False, read_only=True, source='events_user')
+    class Meta:
+        model = models.EventComments
+        fields = (
+            'id',
+            'events',
+            'events_user',
+            'event_comment',
+            'event_comment_date',
+            'event_username'
+        )
+
 class EventSerializer(serializers.ModelSerializer):
     attending_details = NestedUserSerializer(many=True, read_only=True, source='attending')
+    posted_by = NestedUserSerializer(many=False, read_only=True, source='user')
+    comments = EventsCommentsSerializer(many=True, read_only=True, source='comment_events')
     class Meta:
         model = models.Events
         fields = (
             'id', 
+            'comments',
             'user', 
             'name', 
             'description', 
             'date',
             'attending_details',
+            'posted_by'
             )
+        

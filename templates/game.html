@@ -14,24 +14,29 @@
 {% if user.is_authenticated %}
     <header>
         <h1>Welcome to Kosupure, {{ user.username }}! <span><a href="{% url 'logout' %}" class="logout">Logout ?</a></span></h1>
-        <h2><a href="{% url 'home' %}">Kosupure Posts</a></h2>
-        <h2><a href="{% url 'events' %}">Events</a></h2>
+        <h2>
+            <a href="{% url 'home' %}">Kosupure Posts</a>
+            <a href="{% url 'events' %}">Events</a>
+            <a href="{% url 'board' %}">Board</a>
+        </h2>
         <hr class="tophr">
     </header>
 {% else %}
     <header2>
         <h1>Welcome to Kosupure, visitor!</h1>
         <h2>You are not logged in. <a href="{% url 'login' %}" class="logout">Login</a> <a href="{% url 'users:signup' %}" class="logout">Sign Up</a></h2>
-        <h2><a href="{% url 'home' %}">Kosupure Posts</a></h2>
-        <h2><a href="{% url 'events' %}">Events</a></h2>
+        <h2>
+            <a href="{% url 'home' %}">Kosupure Posts</a>
+            <a href="{% url 'events' %}">Events</a>
+            <a href="{% url 'board' %}">Board</a>
+        </h2>
     </header2>
 {% endif %}
 
 <div id="game">
     <div class="imageContainer">
-        <h1>Who told you asteroids were flying by the Earth?</h1> 
+        <h1>Who said danger was coming from the sky?</h1> 
             <a href="#" @click="selection='thanos'; checkDate(); loadNASA(); isHidden = false"><img :src="thanos" class="images" @mouseover="thanosActive = true" @mouseleave="thanosActive = false"></a>
-            <a href="#" @click="selection='morgan'; checkDate(); loadNASA(); isHidden = false"><img :src="morgan" class="images" @mouseover="morganActive = true" @mouseleave="morganActive = false"></a>
             <a href="#" @click="selection='mayan'; checkDate(); loadNASA(); isHidden = false"><img :src="mayan" class="images" @mouseover="mayanActive = true" @mouseleave="mayanActive = false"></a>
             <a href="#" @click="selection='camping'; checkDate(); loadNASA(); isHidden = false"><img :src="camping" class="images" @mouseover="campingActive = true" @mouseleave="campingActive = false"></a>
             <a href="#" @click="selection='apophis'; checkDate(); loadNASA(); isHidden = false"><img :src="tyson" class="images" @mouseover="tysonActive = true" @mouseleave="tysonActive = false"></a>
@@ -39,10 +44,6 @@
         </div>
         <div v-show="thanosActive">
             <h2>"What I'm About To Do To Your Stubborn, Annoying Little Planet, I'm Gonna Enjoy It, Very, Very Much."</h2>
-        </div>
-        <div v-show="morganActive">
-            <h2>We watched as the bombs shattered the second comet into a million pieces of ice and rock that 
-            burned harmlessly in our atmosphere and lit up the sky for an hour. Still, we were left with the devastation of the first. The waters reached as far inland as the Ohio and Tennessee Valleys. It washed away farms and towns, forests and skyscrapers. But, the water receded. The wave hit Europe and Africa too. Millions were lost, and countless more left homeless. But the waters receded. Cities fall, but they are rebuilt. And heroes die, but they are remembered. We honor them with every brick we lay, with every field we sow, With every child we comfort, and then teach to rejoice in what we have been re-given. Our planet. Our home. So now, let us begin.</h2>
         </div>
         <div v-show="mayanActive">
             <h2>Forecasting Armageddon has become trendy of late, with a great deal of attention being given to 
@@ -60,10 +61,10 @@
         <br>
         <hr>
         <br>
-            <p>Enter a date and use my NASA ID to check for danger:</p>
+            <p>Asteroid Rumors? Use My NASA ID to learn more:</p>
         <input v-model="inputDate" id="inputDate" type="date"> 
         <br><br>
-        <button @click="loadNASA(), isHidden = false" id="send">Tell me about this day!</button>
+        <button @click="loadNASA(), isHidden = false" id="send">Discover Nearest Earth Object</button>
         <br>
         
         <br>
@@ -104,21 +105,23 @@
         </div>
         <section>
             <h2> Finance an effort to destroy the incoming asteroid! </h2>
-            <p>Hint: Click the money bag</p>
+            <p>(Hint: Click the money bag)</p>
+            <aside class="game">
                     <button @click="money++">💰</button>
                     <div>
                         Money: [[ Math.floor(money) ]]
                         [[ displayMissiles ]]
                     </div>
 
-                    <div v-for="(resources, id) in resources">
+                    <div v-for="(resources, id) in resources" class="gameicon">
                         [[ resources.count ]]x [[ resources.icon ]]: [[ resources.cost ]]
                         <button @click="buy(id)"
                             v-if="money >= resources.cost">
-                            Finance Lobbyist for [[ id ]]: 💰[[ resources.cost ]]
+                            Finance Lobbyist for more [[ id ]]: 💰[[ resources.cost ]]
                         </button>
                     </div>
-            </section>
+            </aside>
+        </section>
     </div>
 </main>
 </center>
@@ -162,8 +165,6 @@
             mayanActive: false,
             missDistance: '',
             missileaudio: '{% static "images/missile.mp3" %}',
-            morgan: '{% static "images/morgan.jpg" %}',
-            morganActive: false,
             name: '',
             ninety: false,
             potd: '',
@@ -185,26 +186,38 @@
             resources: {
                 Crowdsourcing: {
                     icon: "🧑‍🤝‍🧑",
-                    cost: 5,
-                    rate: 3,
+                    cost: 25,
+                    rate: 1,
                     count: 0
                 },
-                TaxHike: {
+                TaxHikes: {
                     icon: "💸",
-                    cost: 10,
-                    rate: 15,
+                    cost: 500,
+                    rate: 5,
                     count: 0
                 },
-                Mob: {
+                Looting: {
                     icon: "🔥",
-                    cost: 100,
-                    rate: 30,
+                    cost: 10000,
+                    rate: 10,
+                    count: 0
+                },
+                EminentDomain: {
+                    icon: "⚖️",
+                    cost: 2500000,
+                    rate: 25,
+                    count: 0
+                },
+                NationalizedResources: {
+                    icon: "🚅",
+                    cost: 50000000,
+                    rate: 50,
                     count: 0
                 },
                 missile: {
                     icon: "🚀",
-                    cost: 1000,
-                    rate: 400.9,
+                    cost: 1000000000,
+                    rate: 1,
                     count: 0
                 }
             }
@@ -249,9 +262,6 @@
             checkDate: function() {
                 if (this.selection === "thanos") {
                     this.inputDate = "2018-04-25"
-                }
-                else if (this.selection === "morgan") {
-                    this.inputDate = "1998-05-08"
                 }
                 else if (this.selection === "mayan") {
                     this.inputDate = "2012-12-21"
@@ -339,11 +349,40 @@
             setInterval(() => {
                 loopCount++
                 let keys = Object.keys(this.resources)
+                let addition = 0
                 for (index in keys) {
                     let key = keys[index]
-                    this.money += this.resources[key].rate * this.resources[key].count
+                    addition += this.resources[key].rate * this.resources[key].count
                 }
-            }, 100)
+                this.money += addition
+            }, 8)
+            
+            if (localStorage.money) {
+                this.money = parseInt(localStorage.money)
+            }
+            if (localStorage.health) {
+                this.health = parseInt(localStorage.health)
+            }
+            
+            if (localStorage.Crowdsourcing) {
+                this.resources.Crowdsourcing.count = parseInt(localStorage.Crowdsourcing)
+            }
+            if (localStorage.TaxHikes) {
+                this.resources.TaxHikes.count = parseInt(localStorage.TaxHikes)
+            }
+            if (localStorage.Looting) {
+                this.resources.Looting.count = parseInt(localStorage.Looting)
+            }
+            if (localStorage.EminentDomain) {
+                this.resources.EminentDomain.count = parseInt(localStorage.EminentDomain)
+            }
+            if (localStorage.NationalizedResources) {
+                this.resources.NationalizedResources.count = parseInt(localStorage.NationalizedResources)
+            }
+            if (localStorage.missile) {
+                this.resources.missile.count = parseInt(localStorage.missile)
+            }
+            
         },
         computed: {
             displayMissiles: function() {
@@ -352,6 +391,26 @@
                     m += "🚀"
                 }
                 return m
+            }
+        },
+        watch: {
+            money(newMoney) {
+                localStorage.money = newMoney
+            },
+            health(newHealth) {
+                localStorage.health = newHealth
+            },
+            resources:{
+                handler(newResources) {
+                    console.log(newResources)
+                    localStorage.Crowdsourcing = newResources.Crowdsourcing.count
+                    localStorage.TaxHikes = newResources.TaxHikes.count
+                    localStorage.Looting = newResources.Looting.count
+                    localStorage.EminentDomain = newResources.EminentDomain.count
+                    localStorage.NationalizedResources = newResources.NationalizedResources.count
+                    localStorage.missile = newResources.missile.count
+                },
+                deep:true
             }
         }
     })

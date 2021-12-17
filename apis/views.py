@@ -6,7 +6,7 @@ from django_filters.rest_framework import DjangoFilterBackend
 
 from apis.permissions import isCreatorOrReadOnly
 from rest_framework import permissions
-from .serializers import UserSerializer, PostSerializer, CommentSerializer, EventSerializer
+from .serializers import UserSerializer, PostSerializer, CommentSerializer, EventSerializer, EventsCommentsSerializer
 from feed import models
 
 class UserViewSet(viewsets.ModelViewSet):
@@ -59,3 +59,13 @@ class CommentViewSet(viewsets.ModelViewSet):
     queryset = models.Comments.objects.all()
     serializer_class = CommentSerializer
     permission_classes = [permissions.IsAuthenticatedOrReadOnly]
+
+class EventsCommentsViewSet(viewsets.ModelViewSet):
+    queryset = models.EventComments.objects.all()
+    serializer_class = EventsCommentsSerializer
+    permission_classes = [permissions.IsAuthenticatedOrReadOnly]
+
+class CurrentEventsCommentsView(generics.RetrieveAPIView):
+    serializer_class = EventsCommentsSerializer
+    def get_object(self):
+        return self.request.user
