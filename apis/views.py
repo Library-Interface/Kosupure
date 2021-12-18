@@ -12,6 +12,7 @@ from feed import models
 class UserViewSet(viewsets.ModelViewSet):
     queryset = get_user_model().objects.all()
     serializer_class = UserSerializer
+    permission_classes = [isCreatorOrReadOnly]
 
 class CurrentUserView(generics.RetrieveAPIView):
     serializer_class = UserSerializer

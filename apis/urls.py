@@ -13,6 +13,6 @@ urlpatterns = router.urls + [
     path('currentuser/', CurrentUserView.as_view()),
     path('currentpost/', CurrentPostView.as_view()),
     path('currentcomment/', CurrentCommentView.as_view()),
-    path('currentcevent/', CurrentEventView.as_view()),
-    path('currentceventscomments/', CurrentEventsCommentsView.as_view()),
+    path('currentevent/', CurrentEventView.as_view()),
+    path('currenteventscomments/', CurrentEventsCommentsView.as_view()),
 ]  

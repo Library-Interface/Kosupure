@@ -35,13 +35,15 @@
 
 <div id="game">
     <div class="imageContainer">
-        <h1>Who said danger was coming from the sky?</h1> 
-            <a href="#" @click="selection='thanos'; checkDate(); loadNASA(); isHidden = false"><img :src="thanos" class="images" @mouseover="thanosActive = true" @mouseleave="thanosActive = false"></a>
-            <a href="#" @click="selection='mayan'; checkDate(); loadNASA(); isHidden = false"><img :src="mayan" class="images" @mouseover="mayanActive = true" @mouseleave="mayanActive = false"></a>
-            <a href="#" @click="selection='camping'; checkDate(); loadNASA(); isHidden = false"><img :src="camping" class="images" @mouseover="campingActive = true" @mouseleave="campingActive = false"></a>
-            <a href="#" @click="selection='apophis'; checkDate(); loadNASA(); isHidden = false"><img :src="tyson" class="images" @mouseover="tysonActive = true" @mouseleave="tysonActive = false"></a>
-            <br>
-        </div>
+        <center>
+            <h1>Doomsday Page!</h1> 
+                <a href="#" @click="selection='thanos'; checkDate(); loadNASA(); isHidden = false"><img :src="thanos" class="images" @mouseover="thanosActive = true" @mouseleave="thanosActive = false"></a>
+                <a href="#" @click="selection='mayan'; checkDate(); loadNASA(); isHidden = false"><img :src="mayan" class="images" @mouseover="mayanActive = true" @mouseleave="mayanActive = false"></a>
+                <a href="#" @click="selection='camping'; checkDate(); loadNASA(); isHidden = false"><img :src="camping" class="images" @mouseover="campingActive = true" @mouseleave="campingActive = false"></a>
+                <a href="#" @click="selection='apophis'; checkDate(); loadNASA(); isHidden = false"><img :src="tyson" class="images" @mouseover="tysonActive = true" @mouseleave="tysonActive = false"></a>
+                <br>
+            </div>
+        </center>
         <div v-show="thanosActive">
             <h2>"What I'm About To Do To Your Stubborn, Annoying Little Planet, I'm Gonna Enjoy It, Very, Very Much."</h2>
         </div>
@@ -95,13 +97,15 @@
             </div>
         </div>
         <br><br>
-        <div id="bag" :class="{ bag: hundred, burst1: ninety, burst2: eighty, burst3: seventy, burst4: sixty, burst5: fifty, 
-        burst6: forty, burst7: thirty, burst8: twenty, burst9: ten, burst: ended }"></div>
+        <center>
+            <div id="bag" :class="{ bag: hundred, burst1: ninety, burst2: eighty, burst3: seventy, burst4: sixty, burst5: fifty, 
+            burst6: forty, burst7: thirty, burst8: twenty, burst9: ten, burst: ended }"></div>
+        </center>
         <div id="bag-health">
             <div :style="{ width: health + '%' }"></div>
         </div>
         <div id="controls">
-            <button  @click.prevent="fire(), playSound(missileaudio)" v-if="resources.missile.count > 0" v-show="!ended">Fire Missile</button>
+            <button  @click.prevent="fire(), playSound(missileaudio)" v-if="resources.missile.count > 9" v-show="!ended">Fire Missile</button>
         </div>
         <section>
             <h2> Finance an effort to destroy the incoming asteroid! </h2>
@@ -114,10 +118,14 @@
                     </div>
 
                     <div v-for="(resources, id) in resources" class="gameicon">
-                        [[ resources.count ]]x [[ resources.icon ]]: [[ resources.cost ]]
+                        [[ resources.count ]]x [[ resources.icon ]] Tier [[ resources.rate ]] | 
                         <button @click="buy(id)"
                             v-if="money >= resources.cost">
                             Finance Lobbyist for more [[ id ]]: 💰[[ resources.cost ]]
+                        </button>
+                        <button @click="upgrade(id)"
+                            v-if="money >= (resources.cost * 5)">
+                            Upgrade [[ id ]]: 💰[[ (resources.cost *5) ]]
                         </button>
                     </div>
             </aside>
@@ -186,37 +194,103 @@
             resources: {
                 Crowdsourcing: {
                     icon: "🧑‍🤝‍🧑",
-                    cost: 25,
+                    cost: 50,
+                    rate: 1,
+                    count: 0
+                },
+                FineDining: {
+                    icon: "🍽️",
+                    cost: 50,
+                    rate: 1,
+                    count: 0
+                },
+                ClothingLine: {
+                    icon: "👕",
+                    cost: 50,
+                    rate: 1,
+                    count: 0
+                },
+                Pagentry: {
+                    icon: "🎽",
+                    cost: 50,
+                    rate: 1,
+                    count: 0
+                },
+                Athletics: {
+                    icon: "🏈",
+                    cost: 50,
                     rate: 1,
                     count: 0
                 },
                 TaxHikes: {
                     icon: "💸",
-                    cost: 500,
-                    rate: 5,
+                    cost: 50,
+                    rate: 1,
                     count: 0
                 },
                 Looting: {
                     icon: "🔥",
-                    cost: 10000,
-                    rate: 10,
+                    cost: 50,
+                    rate: 1,
+                    count: 0
+                },
+                HeroBakeSale: {
+                    icon: "🍪",
+                    cost: 50,
+                    rate: 3,
                     count: 0
                 },
                 EminentDomain: {
                     icon: "⚖️",
-                    cost: 2500000,
-                    rate: 25,
+                    cost: 50,
+                    rate: 1,
+                    count: 0
+                },
+                AskVillains: {
+                    icon: "❓",
+                    cost: 50,
+                    rate: 10,
+                    count: 0
+                },
+                DoomsdayClockSales: {
+                    icon: "⏰",
+                    cost: 500,
+                    rate: 2,
                     count: 0
                 },
                 NationalizedResources: {
                     icon: "🚅",
-                    cost: 50000000,
-                    rate: 50,
+                    cost: 50,
+                    rate: 1,
+                    count: 0
+                },
+                CorporateTheft: {
+                    icon: "🏢",
+                    cost: 50,
+                    rate: 1,
+                    count: 0
+                },
+                BuildGlobalGovernment: {
+                    icon: "🏗️",
+                    cost: 50,
+                    rate: 1,
+                    count: 0
+                },
+                Prayer: {
+                    icon: "📿",
+                    cost: 50,
+                    rate: 1,
+                    count: 0
+                },
+                ThorFitnessProgram: {
+                    icon: "🚶‍♂️",
+                    cost: 50,
+                    rate: 10,
                     count: 0
                 },
                 missile: {
                     icon: "🚀",
-                    cost: 1000000000,
+                    cost: 100000000000,
                     rate: 1,
                     count: 0
                 }
@@ -327,7 +401,7 @@
                     this.ended = true
                 }
             },
-            restart: function() {
+            prestige: function() {
                 this.health = 100
                 this.ended = false
             },
@@ -336,6 +410,10 @@
                 this.money -= this.resources[id].cost
                 let inflation = 1.1
                 this.resources[id].cost = Math.floor(this.resources[id].cost * inflation)
+            },
+            upgrade: function(id) {
+                this.resources[id].rate++
+                this.money -= Math.floor(this.resources[id].cost * 25)
             },
             playSound (sound) {
                 if(sound) {
@@ -355,7 +433,7 @@
                     addition += this.resources[key].rate * this.resources[key].count
                 }
                 this.money += addition
-            }, 8)
+            }, 1)
             
             if (localStorage.money) {
                 this.money = parseInt(localStorage.money)
@@ -363,25 +441,156 @@
             if (localStorage.health) {
                 this.health = parseInt(localStorage.health)
             }
-            
             if (localStorage.Crowdsourcing) {
                 this.resources.Crowdsourcing.count = parseInt(localStorage.Crowdsourcing)
+            }
+            if (localStorage.CrowdsourcingRate) {
+                this.resources.Crowdsourcing.rate = parseInt(localStorage.CrowdsourcingRate)
+            }
+            if (localStorage.CrowdsourcingCost) {
+                this.resources.Crowdsourcing.cost = parseInt(localStorage.CrowdsourcingCost)
+            }
+            if (localStorage.FineDining) {
+                this.resources.FineDining.count = parseInt(localStorage.FineDining)
+            }
+            if (localStorage.FineDiningRate) {
+                this.resources.FineDining.rate = parseInt(localStorage.FineDiningRate)
+            }
+            if (localStorage.FineDiningCost) {
+                this.resources.FineDining.cost = parseInt(localStorage.FineDiningCost)
+            }
+            if (localStorage.ClothingLine) {
+                this.resources.ClothingLine.count = parseInt(localStorage.ClothingLine)
+            }
+            if (localStorage.ClothingLineRate) {
+                this.resources.ClothingLine.rate = parseInt(localStorage.ClothingLineRate)
+            }
+            if (localStorage.ClothingLineCost) {
+                this.resources.ClothingLine.cost = parseInt(localStorage.ClothingLineCost)
+            }
+            if (localStorage.Pagentry) {
+                this.resources.Pagentry.count = parseInt(localStorage.Pagentry)
+            }
+            if (localStorage.PagentryRate) {
+                this.resources.Pagentry.rate = parseInt(localStorage.PagentryRate)
+            }
+            if (localStorage.PagentryCost) {
+                this.resources.Pagentry.cost = parseInt(localStorage.PagentryCost)
+            }
+            if (localStorage.Athletics) {
+                this.resources.Athletics.count = parseInt(localStorage.Athletics)
+            }
+            if (localStorage.AthleticsRate) {
+                this.resources.Athletics.rate = parseInt(localStorage.AthleticsRate)
+            }
+            if (localStorage.AthleticsCost) {
+                this.resources.Athletics.cost = parseInt(localStorage.AthleticsCost)
             }
             if (localStorage.TaxHikes) {
                 this.resources.TaxHikes.count = parseInt(localStorage.TaxHikes)
             }
+            if (localStorage.TaxHikesRate) {
+                this.resources.TaxHikes.rate = parseInt(localStorage.TaxHikesRate)
+            }
+            if (localStorage.TaxHikesCost) {
+                this.resources.TaxHikes.cost = parseInt(localStorage.TaxHikesCost)
+            }
             if (localStorage.Looting) {
                 this.resources.Looting.count = parseInt(localStorage.Looting)
+            }
+            if (localStorage.LootingRate) {
+                this.resources.Looting.rate = parseInt(localStorage.LootingRate)
+            }
+            if (localStorage.LootingCost) {
+                this.resources.Looting.cost = parseInt(localStorage.LootingCost)
+            }
+            if (localStorage.HeroBakeSale) {
+                this.resources.HeroBakeSale.count = parseInt(localStorage.HeroBakeSale)
+            }
+            if (localStorage.HeroBakeSaleRate) {
+                this.resources.HeroBakeSale.rate = parseInt(localStorage.HeroBakeSaleRate)
+            }
+            if (localStorage.HeroBakeSaleCost) {
+                this.resources.HeroBakeSale.cost = parseInt(localStorage.HeroBakeSaleCost)
             }
             if (localStorage.EminentDomain) {
                 this.resources.EminentDomain.count = parseInt(localStorage.EminentDomain)
             }
+            if (localStorage.EminentDomainRate) {
+                this.resources.EminentDomain.rate = parseInt(localStorage.EminentDomainRate)
+            }
+            if (localStorage.EminentDomainCost) {
+                this.resources.EminentDomain.cost = parseInt(localStorage.EminentDomainCost)
+            }
+            if (localStorage.AskVillains) {
+                this.resources.AskVillains.count = parseInt(localStorage.AskVillains)
+            }
+            if (localStorage.AskVillainsRate) {
+                this.resources.AskVillains.rate = parseInt(localStorage.AskVillainsRate)
+            }
+            if (localStorage.AskVillainsCost) {
+                this.resources.AskVillains.cost = parseInt(localStorage.AskVillainsCost)
+            }
+            if (localStorage.DoomsdayClockSales) {
+                this.resources.DoomsdayClockSales.count = parseInt(localStorage.DoomsdayClockSales)
+            }
+            if (localStorage.DoomsdayClockSalesRate) {
+                this.resources.DoomsdayClockSales.rate = parseInt(localStorage.DoomsdayClockSalesRate)
+            }
+            if (localStorage.DoomsdayClockSalesCost) {
+                this.resources.DoomsdayClockSales.cost = parseInt(localStorage.DoomsdayClockSalesCost)
+            }
             if (localStorage.NationalizedResources) {
                 this.resources.NationalizedResources.count = parseInt(localStorage.NationalizedResources)
+            }
+            if (localStorage.NationalizedResourcesRate) {
+                this.resources.NationalizedResources.rate = parseInt(localStorage.NationalizedResourcesRate)
+            }
+            if (localStorage.NationalizedResourcesCost) {
+                this.resources.NationalizedResources.cost = parseInt(localStorage.NationalizedResourcesCost)
+            }
+            if (localStorage.CorporateTheft) {
+                this.resources.CorporateTheft.count = parseInt(localStorage.CorporateTheft)
+            }
+            if (localStorage.CorporateTheftRate) {
+                this.resources.CorporateTheft.rate = parseInt(localStorage.CorporateTheftRate)
+            }
+            if (localStorage.CorporateTheftCost) {
+                this.resources.CorporateTheft.cost = parseInt(localStorage.CorporateTheftCost)
+            }
+            if (localStorage.BuildGlobalGovernment) {
+                this.resources.BuildGlobalGovernment.count = parseInt(localStorage.BuildGlobalGovernment)
+            }
+            if (localStorage.BuildGlobalGovernmentRate) {
+                this.resources.BuildGlobalGovernment.rate = parseInt(localStorage.BuildGlobalGovernmentRate)
+            }
+            if (localStorage.BuildGlobalGovernmentCost) {
+                this.resources.BuildGlobalGovernment.cost = parseInt(localStorage.BuildGlobalGovernmentCost)
+            }
+            if (localStorage.Prayer) {
+                this.resources.Prayer.count = parseInt(localStorage.Prayer)
+            }
+            if (localStorage.PrayerRate) {
+                this.resources.Prayer.rate = parseInt(localStorage.PrayerRate)
+            }
+            if (localStorage.PrayerCost) {
+                this.resources.Prayer.cost = parseInt(localStorage.PrayerCost)
+            }
+            if (localStorage.ThorFitnessProgram) {
+                this.resources.ThorFitnessProgram.count = parseInt(localStorage.ThorFitnessProgram)
+            }
+            if (localStorage.ThorFitnessProgramRate) {
+                this.resources.ThorFitnessProgram.rate = parseInt(localStorage.ThorFitnessProgramRate)
+            }
+            if (localStorage.ThorFitnessProgramCost) {
+                this.resources.ThorFitnessProgram.cost = parseInt(localStorage.ThorFitnessProgramCost)
             }
             if (localStorage.missile) {
                 this.resources.missile.count = parseInt(localStorage.missile)
             }
+            if (localStorage.missileCost) {
+                this.resources.missile.cost = parseInt(localStorage.missileCost)
+            } 
             
         },
         computed: {
@@ -404,11 +613,55 @@
                 handler(newResources) {
                     console.log(newResources)
                     localStorage.Crowdsourcing = newResources.Crowdsourcing.count
+                    localStorage.CrowdsourcingRate = newResources.Crowdsourcing.rate
+                    localStorage.CrowdsourcingCost = newResources.Crowdsourcing.cost
+                    localStorage.FineDining = newResources.FineDining.count
+                    localStorage.FineDiningRate = newResources.FineDining.rate
+                    localStorage.FineDiningCost = newResources.FineDining.cost
+                    localStorage.ClothingLine = newResources.ClothingLine.count
+                    localStorage.ClothingLineRate = newResources.ClothingLine.rate
+                    localStorage.ClothingLineCost = newResources.ClothingLine.cost
+                    localStorage.Pagentry = newResources.Pagentry.count
+                    localStorage.PagentryRate = newResources.Pagentry.rate
+                    localStorage.PagentryCost = newResources.Pagentry.cost
+                    localStorage.Athletics = newResources.Athletics.count
+                    localStorage.AthleticsRate = newResources.Athletics.rate
+                    localStorage.AthleticsCost = newResources.Athletics.cost
                     localStorage.TaxHikes = newResources.TaxHikes.count
+                    localStorage.TaxHikesRate = newResources.TaxHikes.rate
+                    localStorage.TaxHikesCost = newResources.TaxHikes.cost
                     localStorage.Looting = newResources.Looting.count
+                    localStorage.LootingRate = newResources.Looting.rate
+                    localStorage.LootingCost = newResources.Looting.cost
+                    localStorage.HeroBakeSale = newResources.HeroBakeSale.count
+                    localStorage.HeroBakeSaleRate = newResources.HeroBakeSale.rate
+                    localStorage.HeroBakeSaleCost = newResources.HeroBakeSale.cost
                     localStorage.EminentDomain = newResources.EminentDomain.count
+                    localStorage.EminentDomainRate = newResources.EminentDomain.rate
+                    localStorage.EminentDomainCost = newResources.EminentDomain.cost
+                    localStorage.AskVillains = newResources.AskVillains.count
+                    localStorage.AskVillainsRate = newResources.AskVillains.rate
+                    localStorage.AskVillainsCost = newResources.AskVillains.cost
+                    localStorage.DoomsdayClockSales = newResources.DoomsdayClockSales.count
+                    localStorage.DoomsdayClockSalesRate = newResources.DoomsdayClockSales.rate
+                    localStorage.DoomsdayClockSalesCost = newResources.DoomsdayClockSales.cost
                     localStorage.NationalizedResources = newResources.NationalizedResources.count
+                    localStorage.NationalizedResourcesRate = newResources.NationalizedResources.rate
+                    localStorage.NationalizedResourcesCost = newResources.NationalizedResources.cost
+                    localStorage.CorporateTheft = newResources.CorporateTheft.count
+                    localStorage.CorporateTheftRate = newResources.CorporateTheft.rate
+                    localStorage.CorporateTheftCost = newResources.CorporateTheft.cost
+                    localStorage.BuildGlobalGovernment = newResources.BuildGlobalGovernment.count
+                    localStorage.BuildGlobalGovernmentRate = newResources.BuildGlobalGovernment.rate
+                    localStorage.BuildGlobalGovernmentCost = newResources.BuildGlobalGovernment.cost
+                    localStorage.Prayer = newResources.Prayer.count
+                    localStorage.PrayerRate = newResources.Prayer.rate
+                    localStorage.PrayerCost = newResources.Prayer.cost
+                    localStorage.ThorFitnessProgram = newResources.ThorFitnessProgram.count
+                    localStorage.ThorFitnessProgramRate = newResources.ThorFitnessProgram.rate
+                    localStorage.ThorFitnessProgramCost = newResources.ThorFitnessProgram.cost
                     localStorage.missile = newResources.missile.count
+                    localStorage.missileCost = newResources.missile.cost
                 },
                 deep:true
             }

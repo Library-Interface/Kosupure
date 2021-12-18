@@ -7,7 +7,7 @@ from feed import models
 class NestedUserSerializer(serializers.ModelSerializer):
     class Meta:
         model = get_user_model()
-        fields = ('username', 'is_creator', 'is_adult')
+        fields = ('username', 'is_creator', 'is_adult', 'id')
 
 class NestedCommentSerializer(serializers.ModelSerializer):
     posted_by = NestedUserSerializer(many=False, read_only=True, source='user_name')

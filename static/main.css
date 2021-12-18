@@ -239,7 +239,7 @@ input[type=submit] {
     height: 500px;
     max-width: 1200px;
     margin: 5px;
-    background: url(images/asteroidbag.jpg) center no-repeat;
+    background: url(images/asteroid.jpg) center no-repeat;
     background-size: 80%;
 }
 
@@ -335,4 +335,14 @@ background: black;
 .gameicon {
     border: 2px solid rgb(0, 225, 255);
     
+}
+
+.bio {
+    margin-top: 5px;
+    margin-bottom: 5px;
+}
+
+.website {
+    margin-top: 5px;
+    margin-bottom: 5px;
 }

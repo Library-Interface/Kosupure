@@ -34,6 +34,10 @@
 {% endif %}
 
 <div id="app">
+    <a v-if="user.is_creator" href="#" @click="profileActive = profileActive ? false : true">Update Profile</a>
+    <div v-show="profileActive">
+        <update-profile :user="user" :csrf_token='csrf_token' @profile-updated="afterProfileUpdated(user.id)"></update-profile>
+    </div>
     <div id='remove'>
     <img src='{% static "images/tardis.jpg" %}' @click="searchPoints++" class='tard'>
     <h1>Tardis departing in [[ timerCount ]]</h1>
@@ -58,9 +62,17 @@
     <div v-if="searchPoints > 0">
         <div v-if="!user.is_adult" v-for="post in filteredAdult" :key="posts.id">
             <div class="flex-container"> 
-                <div @click="showUser(post.posted_by['username'])"> Posted by: [[ post.posted_by['username'] ]] </div>
+                <div @click="showUser(post.posted_by)"> Posted by: [[ post.posted_by['username'] ]] </div>
                 <div>[[ formattingDates(post.date_posted) ]]</div>
                 <div v-if="post.posted_by.is_adult == true">This creator is an adult </div>
+            </div>
+            <div class="flex-container">
+                <div v-if="bio" class="bio">
+                    Biography: [[ bio ]]
+                </div>
+                <div v-if="website" class="website">
+                    Website: [[ website ]]
+                </div>
             </div>
             <div v-if="post.posted_by.username == user.username">
                 <button @click="deletePost(post)" class="delete">Delete Post</button>
@@ -77,9 +89,17 @@
         </div>
         <div v-if="user.is_adult" v-for="post in posts" :key="posts.id">
             <div class="flex-container"> 
-                <div @click="showUser(post.posted_by['username'])"> Posted by: [[ post.posted_by['username'] ]] </div>
+                <div @click="showUser(post.posted_by)"> Posted by: [[ post.posted_by['username'] ]] </div>
                 <div>[[ formattingDates(post.date_posted) ]]</div>
                 <div v-if="post.posted_by.is_adult == true">This creator is an adult </div>
+            </div>
+            <div class="flex-container">
+                <div v-if="bio" class="bio">
+                    Biography: [[ bio ]]
+                </div>
+                <div v-if="website" class="website">
+                    Website: [[ website ]]
+                </div>
             </div>
             <div v-if="post.posted_by.username == user.username">
                 <button @click="deletePost(post)" class="delete">Delete Post</button>
@@ -246,6 +266,47 @@
         }
     })
 
+    Vue.component('update-profile', {
+        delimiters: ['[[', ']]'],
+        props: [ 'user', 'csrf_token' ],
+        data: function () {
+            return {
+                biography: "",
+                website: "",
+                email: "",
+            }
+        },
+        template: `
+        <form>
+            <textarea cols="100" rows="3" placeholder="Enter biography here:" v-model="biography"></textarea> <br>
+            <input type="url" name="url" id="url" placeholder="https://example.com" pattern="https://.*" v-model="website"> <br>
+            <input type="email" id="email" placeholder="email goes here" pattern=".+@globex\.com" v-model="email"> <br>
+            <button @click.prevent="updateMyProfile" class="submit">Submit</button>
+        </form>
+        `,
+        methods: {
+            updateMyProfile: function () {
+                axios({
+                    method: 'patch',
+                    url: `/apis/v1/users/${this.user.id}/`,
+                    headers: {
+                        'X-CSRFToken': this.csrf_token
+                    },
+                    data: {
+                        'biography': this.biography,
+                        'website': this.website,
+                        'email': this.email
+                    }
+                }).then(response => {
+                    this.biography = ''
+                    this.website = ''
+                    this.email = ''
+                    this.$emit("profile-updated")
+                })
+            }
+        }
+    })
+
     Vue.component('new-post', {
         delimiters: ['[[', ']]'],
         props: [ 'user', 'csrf_token' ],
@@ -314,7 +375,7 @@
         el: "#app",
         delimiters: ['[[', ']]'],
         data: {
-            board: false,
+            bio: '',
             id: {},
             comments: [],
             created_at: new Date().toISOString().slice(0,10),
@@ -332,6 +393,8 @@
             tagSearch: '',
             tok: false,
             timerCount: 11,
+            website: '',
+            profileActive: false,
         },
         methods: {
             loadCurrentUser: function() {
@@ -371,15 +434,27 @@
                     this.posts = response.data.reverse()
                 })
             },
-            showUser: function (user_id) {
+            showUser: function (user) {
+                console.log(user)
                 axios({
                     method: 'GET',
                     url: '/apis/v1/posts/',
                     params: {
-                        user_name__username: user_id
+                        user_name__username: user.username
                         } 
                 }).then(response => {
                     this.posts = response.data.reverse()
+                    this.getUserBio(user.id)
+                })
+            },
+            getUserBio: function (user_id) {
+                axios({
+                    method: 'GET',
+                    url: `/apis/v1/users/${user_id}/`
+                }).then(response => {
+                    this.bio = response.data['biography']
+                    console.log(response.data)
+                    this.website = response.data['website']
                 })
             },
             getMorePosts() {
@@ -428,6 +503,9 @@
             },
             afterCommentPosted: function () {
                 this.loadPosts()
+            },
+            afterProfileUpdated: function (user_id) {
+                this.getUserBio(user_id)
             }
         },
         created: function () {
