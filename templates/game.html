@@ -6,7 +6,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="{% static 'main.css' %}">
-    <title>Kosupure</title>
+    <title>Idle Game</title>
 </head>
 
 <body>
@@ -17,7 +17,8 @@
         <h2>
             <a href="{% url 'home' %}">Kosupure Posts</a>
             <a href="{% url 'events' %}">Events</a>
-            <a href="{% url 'board' %}">Board</a>
+            <a href="{% url 'board' %}">Chatroom</a>
+            <a href="{% url 'calculator' %}">Calculator</a>
         </h2>
         <hr class="tophr">
     </header>
@@ -28,7 +29,8 @@
         <h2>
             <a href="{% url 'home' %}">Kosupure Posts</a>
             <a href="{% url 'events' %}">Events</a>
-            <a href="{% url 'board' %}">Board</a>
+            <a href="{% url 'board' %}">Chatroom</a>
+            <a href="{% url 'calculator' %}">Calculator</a>
         </h2>
     </header2>
 {% endif %}
@@ -38,27 +40,21 @@
         <center>
             <h1>Doomsday Page!</h1> 
                 <a href="#" @click="selection='thanos'; checkDate(); loadNASA(); isHidden = false"><img :src="thanos" class="images" @mouseover="thanosActive = true" @mouseleave="thanosActive = false"></a>
-                <a href="#" @click="selection='mayan'; checkDate(); loadNASA(); isHidden = false"><img :src="mayan" class="images" @mouseover="mayanActive = true" @mouseleave="mayanActive = false"></a>
-                <a href="#" @click="selection='camping'; checkDate(); loadNASA(); isHidden = false"><img :src="camping" class="images" @mouseover="campingActive = true" @mouseleave="campingActive = false"></a>
+                <a href="#" @click="selection='doomsday'; checkDate(); loadNASA(); isHidden = false"><img :src="doomsday" class="images" @mouseover="doomsdayActive = true" @mouseleave="doomsdayActive = false"></a>
                 <a href="#" @click="selection='apophis'; checkDate(); loadNASA(); isHidden = false"><img :src="tyson" class="images" @mouseover="tysonActive = true" @mouseleave="tysonActive = false"></a>
                 <br>
             </div>
         </center>
         <div v-show="thanosActive">
-            <h2>"What I'm About To Do To Your Stubborn, Annoying Little Planet, I'm Gonna Enjoy It, Very, Very Much."</h2>
+            <h2>"What I'm About To Do To Your Stubborn, Annoying Little Planet, I'm Gonna Enjoy It, Very, Very Much." -- Thanos</h2>
         </div>
-        <div v-show="mayanActive">
-            <h2>Forecasting Armageddon has become trendy of late, with a great deal of attention being given to 
-            an interpretation of the Mayan Calendar suggesting that Mother Earth is destined for doom in 
-            December of 2012. - Author: Seth Shostak</h2>
-        </div>
-        <div v-show="campingActive">
-            <h2>“And now, we have no option. We can't say 'maybe' 'it's possible' 'it looks very probable...' 
-            No way! We have to say this is what the Bible teaches! This is fact! May 21, 2011 is the day of the 
-            Rapture, it is the day that Judgment Day begins...” ― Harold Camping</h2>
+        <div v-show="doomsdayActive">
+            <h2>You don't get it, blue. I'm not some bad guy, something you can punch. I've always been here, and I'll always be here.
+
+                -- Doomsday (Prime Earth)</h2>
         </div>
         <div v-show="tysonActive">
-            <h2>“On Friday the 13th, April 2029, an asteroid large enough to fill the Rose Bowl as though it were an egg cup will fly so close to Earth that it will dip below the altitude of our communication satellites. We did not name this asteroid Bambi. Instead, we named it Apophis, after the Egyptian god of darkness and death.” - Neil DeGrasse Tyson</h2>
+            <h2>“On Friday the 13th, April 2029, an asteroid large enough to fill the Rose Bowl as though it were an egg cup will fly so close to Earth that it will dip below the altitude of our communication satellites. We did not name this asteroid Bambi. Instead, we named it Apophis, after the Egyptian god of darkness and death.” -- Neil DeGrasse Tyson</h2>
         </div>
         <br>
         <hr>
@@ -105,7 +101,7 @@
             <div :style="{ width: health + '%' }"></div>
         </div>
         <div id="controls">
-            <button  @click.prevent="fire(), playSound(missileaudio)" v-if="resources.missile.count > 9" v-show="!ended">Fire Missile</button>
+            <button  @click.prevent="fire(), playSound(missileaudio)" v-if="resources.missile.count > 0" v-show="!ended">Fire Missile</button>
         </div>
         <section>
             <h2> Finance an effort to destroy the incoming asteroid! </h2>
@@ -116,12 +112,15 @@
                         Money: [[ Math.floor(money) ]]
                         [[ displayMissiles ]]
                     </div>
-
                     <div v-for="(resources, id) in resources" class="gameicon">
                         [[ resources.count ]]x [[ resources.icon ]] Tier [[ resources.rate ]] | 
                         <button @click="buy(id)"
                             v-if="money >= resources.cost">
                             Finance Lobbyist for more [[ id ]]: 💰[[ resources.cost ]]
+                        </button>
+                        <button @click="buy10(id)"
+                            v-if="money >= resources.cost*10">
+                            Buy 10: 💰[[ resources.cost ]]
                         </button>
                         <button @click="upgrade(id)"
                             v-if="money >= (resources.cost * 5)">
@@ -149,8 +148,6 @@
             apophis: '{% static "images/apophis.jpg" %}',
             asteroid: '',
             asteroidName: '',
-            camping: '{% static "images/camping.jpg" %}',
-            campingActive: false,
             deep: '{% static "images/deep.jpg" %}',
             date: '',
             designation: '',
@@ -169,8 +166,8 @@
             lookUpSpeed: '',
             lunar: '',
             mph: '',
-            mayan: '{% static "images/mayan.jpg" %}',
-            mayanActive: false,
+            doomsday: '{% static "images/doomsday.jpg" %}',
+            doomsdayActive: false,
             missDistance: '',
             missileaudio: '{% static "images/missile.mp3" %}',
             name: '',
@@ -337,11 +334,8 @@
                 if (this.selection === "thanos") {
                     this.inputDate = "2018-04-25"
                 }
-                else if (this.selection === "mayan") {
-                    this.inputDate = "2012-12-21"
-                }
-                else if (this.selection === "camping") {
-                    this.inputDate = "2021-05-21"
+                else if (this.selection === "doomsday") {
+                    this.inputDate = "2015-11-13"
                 }
                 else if (this.selection === "apophis") {
                     this.inputDate = "2029-04-13"
@@ -409,6 +403,21 @@
                 this.resources[id].count++
                 this.money -= this.resources[id].cost
                 let inflation = 1.1
+                this.resources[id].cost = Math.floor(this.resources[id].cost * inflation)
+            },
+            buy10: function(id) {
+                this.resources[id].count++
+                this.resources[id].count++
+                this.resources[id].count++
+                this.resources[id].count++
+                this.resources[id].count++
+                this.resources[id].count++
+                this.resources[id].count++
+                this.resources[id].count++
+                this.resources[id].count++
+                this.resources[id].count++
+                this.money -= this.resources[id].cost*10
+                let inflation = 1
                 this.resources[id].cost = Math.floor(this.resources[id].cost * inflation)
             },
             upgrade: function(id) {

@@ -346,3 +346,35 @@ background: black;
     margin-top: 5px;
     margin-bottom: 5px;
 }
+
+
+@keyframes show {
+    0% {
+        transform: scale(0) rotate(720deg);
+    }
+    100% {
+        transform: scale(1) rotate(0deg);
+    }
+}
+
+.chart-wrapper {
+    width: 700px;
+    height: 300px;
+    margin: 0 auto;
+    animation: show 1s ease-in-out;
+}
+
+.container1 {
+    font-size: 16px;
+    font-size: max(16px, 1em);
+    font-family: copperplate gothic light;
+    padding: 0.25em 0.5em;
+    border: 2px solid black ;
+    border-radius: 4px;
+    transition: 180ms box-shadow ease-in-out;
+    color: white;
+}
+
+.pie-chart {
+    color: white;
+}

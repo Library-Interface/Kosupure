@@ -103,4 +103,23 @@ class EventSerializer(serializers.ModelSerializer):
             'attending_details',
             'posted_by'
             )
-        
+
+class ChatSerializer(serializers.ModelSerializer):
+    chat_name = NestedUserSerializer(many=False, read_only=True, source='name')
+    class Meta:
+        model = models.Chat
+        fields = (
+            'chat_name',
+            'id',
+            'name',
+            'message',
+            'date',
+        )
+
+class LiveSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = models.Live
+        fields = (
+            'id',
+            'site',
+        )

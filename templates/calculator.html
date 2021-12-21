@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css" integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS"
+    crossorigin="anonymous">
+    <link rel="stylesheet" href="{% static 'main.css' %}">
+    <title>Calculator</title>
+</head>
+
+<body>
+{% csrf_token %}
+{% if user.is_authenticated %}
+    <header>
+        <h1>Welcome to Kosupure, {{ user.username }}! <span><a href="{% url 'logout' %}" class="logout">Logout ?</a></span></h1>
+        <h2>
+            <a href="{% url 'home' %}">Kosupure Posts</a>
+            <a href="{% url 'game' %}">Idle Game</a>
+            <a href="{% url 'board' %}">Chatroom</a>
+        </h2>
+        <hr class="tophr">
+    </header>
+{% else %}
+    <header2>
+        <h1>Welcome to Kosupure, visitor!</h1>
+        <h2>You are not logged in. <a href="{% url 'login' %}" class="logout">Login</a> <a href="{% url 'users:signup' %}" class="logout">Sign Up</a></h2>
+        <h2>
+            <a href="{% url 'home' %}">Kosupure Posts</a>
+            <a href="{% url 'game' %}">Idle Game</a>
+            <a href="{% url 'board' %}">Chatroom</a>
+        </h2>
+    </header2>
+{% endif %}
+
+<div id="calculator">
+
+<h1>How much Cosplay can I afford?</h1>
+<div class="wrapper">
+    <div class="container1 d-flex flex-column justify-content-center align-items-center">
+        <div class="chart-wrapper">
+            <canvas id="myChart"></canvas>
+        </div>
+    </div>
+</div>
+<kos-life></kos-life>
+
+</div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.3/Chart.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/vue@2/dist/vue.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+<script>
+
+    Vue.component('kos-life', {
+        delimiters: ['[[', ']]'],
+        data: function () {
+            return {
+                conhotel: '',
+                contravel: '',
+                confood: '',
+                conextras: '',
+                contotal: '',
+                rent: '',
+                vehicle: '',
+                food: '',
+                entertainment: '',
+                hometotal: '',
+                leftover: '',
+                money: '',
+                cosplaymonies: '',
+            }
+        },
+        template: `
+        <div>
+            <form>
+                <h2>The Convention:</h2>
+                <p>Hotel Costs:
+                    <input type="text" size="50" placeholder='Hotel (usually $250-$300/night)' v-model="conhotel">
+                </p>
+                <p>Travel Costs:
+                    <input type="text" size="50" placeholder='Travel (usually $75-$200)' v-model="contravel">
+                </p>
+                <p>Food Costs:
+                    <input type="text" size="50" placeholder='Food/Beer (usually $50/person/day)' v-model="confood">
+                </p>
+                <p>Con Extras:
+                    <input type="text" size="50" placeholder='Art/Autographs/Photos/Parties (usually $400)' v-model="conextras">
+                </p>
+                <br>
+                <center>
+                    <button @click.prevent="conmath">Calculate Convention Total</button>
+                    <p>Convention Total: $[[ contotal ]]</p>
+                </center>
+            </form>
+            <form v-if="contotal > 0">
+                <h2>Life (Per Month):</h2>
+                <p>Rent:
+                    <input type="text" size="50" placeholder='Rent (usually $1000-2300/month)' v-model="rent">
+                </p>
+                <p>Food:
+                    <input type="text" size="50" placeholder='Dining in/out (usually $400-700/month)' v-model="food">
+                </p>
+                <p>Vehicle:
+                    <input type="text" size="50" placeholder='Car/Gas/Insurance (usually $300-900/month)' v-model="vehicle">
+                </p>
+                <p>Entertainment:
+                    <input type="text" size="50" placeholder='Movies/Comics/Games (usually $300-900/month)' v-model="entertainment">
+                </p>
+                <br>
+                <center>
+                    <button @click.prevent="homemath">Calculate Living Expenses</button>
+                    <p>Living Expenses (12 Months): $[[ hometotal ]]</p>
+                    <h1>Total Cost thus far: $[[ leftover ]]</h1>
+                </center>
+            </form>
+            <br>
+            <br>
+            <form v-if="leftover > 0">
+                <p>Annual Earnings after taxes: <input type="text" size="25" placeholder="No commas, ie 26000" v-model="money"></p>
+                <center>
+                    <button @click.prevent="cosplaymoney">Calculate Money for Cosplay</button>
+                    <p>Money for Cosplay: $[[ cosplaymonies ]]</p>
+                </center>
+            </form>
+        </div>
+        `,
+        methods: {
+            conmath: function () {
+                this.contotal = parseInt(this.conhotel) + parseInt(this.contravel) + parseInt(this.confood) + parseInt(this.conextras)
+                this.conhotel = 'thank you'
+                this.contravel = 'now please'
+                this.confood = 'fill out the'
+                this.conextras = 'life expenses'
+            },
+            homemath: function () {
+                this.hometotal = (parseInt(this.rent) + parseInt(this.food) + parseInt(this.vehicle) + parseInt(this.entertainment)) * 12
+                this.rent = 'the total'
+                this.food = 'includes'
+                this.vehicle = 'the monthly'
+                this.entertainment = 'multiplied by 12'
+                this.totalmath()
+            },
+            totalmath: function () {
+                this.leftover = this.contotal + this.hometotal
+            },
+            cosplaymoney: function () {
+                this.cosplaymonies = parseInt(this.money) - this.leftover
+            }
+        }
+    })
+
+    const app = new Vue({
+        el: "#calculator",
+        delimiters: ['[[', ']]'],
+        data: {
+            user: [],
+            csrf_token: "",
+            money: '',
+        },      
+        methods: {
+            loadCurrentUser: function() {
+                axios({
+                    method: 'get',
+                    url: '/apis/v1/currentuser/'
+                }).then(response => {
+                    this.user = response.data
+                })
+            }
+        },
+        created: function () {
+            this.loadCurrentUser()
+        },
+        mounted: function () {
+            this.csrf_token = document.querySelector("input[name=csrfmiddlewaretoken]").value
+        },
+    })
+
+    let ctx = document.getElementById('myChart').getContext('2d');
+    let labels = ['Typical Hotel 🏢', 'Typical Travel ✈', 'Typical Food 🍕', 'Typical Extras 👕🍣'];
+    let colorHex = ['#FB3640', '#EFCA08', '#43AA8B', '#253D5B'];
+    
+    let myChart = new Chart(ctx, {
+        type: 'pie',
+        data: {
+            datasets: [{
+                data: [900, 200, 200, 400],
+                backgroundColor: colorHex
+        }],
+        labels: labels
+        },
+        options: {
+        responsive: true,
+        legend: {
+            position: 'bottom'
+        },
+        plugins: {
+            datalabels: {
+                color: '#fff',
+                anchor: 'end',
+                align: 'start',
+                offset: -10,
+                borderWidth: 2,
+                borderColor: '#fff',
+                borderRadius: 25,
+                backgroundColor: (context) => {
+                    return context.dataset.backgroundColor;
+            },
+            font: {
+                weight: 'bold',
+                size: '10'
+            },
+            formatter: (value) => {
+                return value + ' %';
+            }
+            }
+        }
+        }
+    })
+
+</script>
+</body>

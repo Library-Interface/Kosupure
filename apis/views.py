@@ -6,7 +6,7 @@ from django_filters.rest_framework import DjangoFilterBackend
 
 from apis.permissions import isCreatorOrReadOnly
 from rest_framework import permissions
-from .serializers import UserSerializer, PostSerializer, CommentSerializer, EventSerializer, EventsCommentsSerializer
+from .serializers import UserSerializer, PostSerializer, CommentSerializer, EventSerializer, EventsCommentsSerializer, ChatSerializer, LiveSerializer
 from feed import models
 
 class UserViewSet(viewsets.ModelViewSet):
@@ -69,4 +69,22 @@ class EventsCommentsViewSet(viewsets.ModelViewSet):
 class CurrentEventsCommentsView(generics.RetrieveAPIView):
     serializer_class = EventsCommentsSerializer
     def get_object(self):
+        return self.request.user
+
+class CurrentChatView(generics.RetrieveAPIView):
+    serializer_class = ChatSerializer
+    def get_objects(self):
+        return self.request.user
+
+class ChatViewSet(viewsets.ModelViewSet):
+    queryset = models.Chat.objects.all()
+    serializer_class = ChatSerializer
+
+class LiveViewSet(viewsets.ModelViewSet):
+    queryset = models.Live.objects.all()
+    serializer_class = LiveSerializer
+
+class CurrentLiveView(generics.RetrieveAPIView):
+    serializer_class = LiveSerializer
+    def get_objects(self):
         return self.request.user

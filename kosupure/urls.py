@@ -26,5 +26,6 @@ urlpatterns = [
     path('', TemplateView.as_view(template_name='home.html'), name='home'),
     path('events/', TemplateView.as_view(template_name='events.html'), name='events'),
     path('game/', TemplateView.as_view(template_name='game.html'), name='game'),
-    path('board/', TemplateView.as_view(template_name='board.html'), name='board')
+    path('board/', TemplateView.as_view(template_name='board.html'), name='board'),
+    path('calculator/', TemplateView.as_view(template_name='calculator.html'), name='calculator')
 ]

@@ -49,3 +49,14 @@ class EventComments(models.Model):
 
 	def __str__(self):
 		return self.event_comment
+
+class Chat(models.Model):
+	name = models.ForeignKey(get_user_model(), on_delete=models.CASCADE)
+	message = models.CharField(max_length=800, blank=True)
+	date = models.DateTimeField(default=timezone.now)
+
+	def __str__(self):
+		return self.message
+
+class Live(models.Model):
+	site = models.CharField(max_length=150, blank=True)
