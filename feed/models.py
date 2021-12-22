@@ -3,10 +3,11 @@ from django.contrib.auth.models import User
 from django.contrib.auth import get_user_model
 from django.urls import reverse
 from django.utils import timezone
+from cloudinary.models import CloudinaryField
 
 class Post(models.Model):
 	description = models.CharField(max_length=800, blank=True)
-	pic = models.ImageField(upload_to='static/images')
+	pic = CloudinaryField('image')
 	date_posted = models.DateTimeField(default=timezone.now)
 	user_name = models.ForeignKey(get_user_model(), on_delete=models.CASCADE)
 	tags = models.CharField(max_length=400, blank=True)

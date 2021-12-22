@@ -20,6 +20,10 @@ Guest vs Logged-in vs Creator tri-chotamy
 
 Just in case this method doesn't work:
 
+models: 
+
+pic = models.ImageField(upload_to='static/images')
+
 Vue.component('new-post', {
         delimiters: ['[[', ']]'],
         props: [ 'user', 'csrf_token' ],

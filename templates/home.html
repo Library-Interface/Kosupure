@@ -364,18 +364,13 @@
                     this.thumbs.unshift({
                     url: res.data.secure_url
                     }),
-                    console.log(this.thumbs)
-                    this.thumb.url.unshift({
-                    url: res.data.secure_url
-                    })
-                    console.log(this.thumb.url)
                 })
             },
             newPost: function () {
                 let formData = new FormData()
                 formData.append('user_name', this.user.id)
                 formData.append('description', this.newPostWords)
-                formData.append('pic', this.thumb.url)
+                formData.append('pic', this.thumbs[0].url)
                 formData.append('tags', this.tags)
                 formData.append('adult_content', this.adult_content)
                 axios({
