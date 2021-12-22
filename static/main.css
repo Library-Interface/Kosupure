@@ -378,3 +378,39 @@ background: black;
 .pie-chart {
     color: white;
 }
+
+@media screen and (max-width : 480px) {
+    a:link, a:visited {
+        font-size: .5em;
+    }
+    body {
+        font-size: .5em;
+    }
+    input {
+        font-size: .5em;
+    }
+    select {
+        font-size: .5em;
+    }
+    button {
+        font-size: .5em;
+    }
+    div.reveal button {
+        font-size: .8em;
+    }
+    .delete {
+        font-size: .5em;
+    }
+    textarea {
+        font-size: .5em;
+    }
+    .submit {
+        font-size: 1em;
+    }
+    h1 {
+        font-size: 1em;
+    }
+    .container {
+        font-size: .5em;
+    }
+}
