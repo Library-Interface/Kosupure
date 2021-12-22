@@ -325,9 +325,6 @@
                 apiKey: "252218687775656",
                 cloudName: "hrdaolryt", 
             },
-            thumb: {
-                url: ''
-            },
             imageurl: ''
         }},
         template: `
@@ -342,10 +339,10 @@
             <br>
             <div class="row">
                 <div class="col-md-12">
-                    <input type="file" v-model="thumb.url" class="form-control" v-on:change="upload($event.target.files)" accept="image/*" />
+                    <input type="file" class="form-control" v-on:change="upload($event.target.files)" accept="image/*" />
                 </div>
             </div>
-            <h2>This post is safe for kids (no blood, bullying, etc): <input type="checkbox" id="checkbox" v-model="adult_content"><label for="checkbox">[[ adult_content ? 'Uncheck box to certify image is safe for kids': 'check box if image is for adults' ]]</label></h2>
+            <h2>This post IS safe for kids (no blood, bullying, etc): <input type="checkbox" id="checkbox" v-model="adult_content"><label for="checkbox">[[ adult_content ? 'Uncheck box to certify image is safe for kids': 'check box if image is for adults' ]]</label></h2>
             <button @click.prevent="newPost" class="submit">Submit</button>
         </form>
         `,
@@ -372,7 +369,6 @@
                 formData.append('pic', this.imageurl)
                 formData.append('tags', this.tags)
                 formData.append('adult_content', this.adult_content)
-                console.log(FormData)
                 axios({
                     method: 'post',
                     url: '/apis/v1/posts/',
