@@ -413,4 +413,14 @@ background: black;
     .container {
         font-size: .5em;
     }
+    element.style {
+        display: block;
+        height: 254px;
+        width: 374px;
+    }
+    input[type=text] {
+        min-width: 225px;
+        padding: 1px;
+        margin: 1px;
+    }
 }
