@@ -43,7 +43,6 @@ INSTALLED_APPS = [
     'rest_framework',
     'django_filters',
     'apis',
-    'cloudinary',
 ]
 
 REST_FRAMEWORK = {

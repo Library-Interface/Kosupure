@@ -362,6 +362,7 @@
                 }
                 axios.post(this.clUrl, formData).then(res => {
                     this.imageurl = res.data.secure_url
+                    console.log(this.imageurl)
                 })
             },
             newPost: function () {
@@ -371,6 +372,7 @@
                 formData.append('pic', this.imageurl)
                 formData.append('tags', this.tags)
                 formData.append('adult_content', this.adult_content)
+                console.log(FormData)
                 axios({
                     method: 'post',
                     url: '/apis/v1/posts/',
