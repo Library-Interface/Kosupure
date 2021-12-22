@@ -328,7 +328,7 @@
             thumb: {
                 url: ''
             },
-            thumbs: []
+            imageurl: ''
         }},
         template: `
         <form enctype="multipart/form-data">
@@ -351,7 +351,7 @@
         `,
         methods: {
             upload: function(file) {
-                const formData = new FormData()
+                let formData = new FormData()
                 formData.append('file', file[0]);
                 formData.append('upload_preset', this.cloudinary.uploadPreset);
                 formData.append('tags', 'gs-vue,gs-vue-uploaded');
@@ -361,16 +361,14 @@
                     console.log(pair[0]+', '+pair[1]);
                 }
                 axios.post(this.clUrl, formData).then(res => {
-                    this.thumbs.unshift({
-                    url: res.data.secure_url
-                    }),
+                    this.imageurl = res.data.secure_url
                 })
             },
             newPost: function () {
                 let formData = new FormData()
                 formData.append('user_name', this.user.id)
                 formData.append('description', this.newPostWords)
-                formData.append('pic', this.thumbs[0].url)
+                formData.append('pic', this.imageurl)
                 formData.append('tags', this.tags)
                 formData.append('adult_content', this.adult_content)
                 axios({
