@@ -125,6 +125,7 @@
 <script src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/16327/gsap-latest-beta.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/vue@2/dist/vue.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.15.3/axios.min.js"></script>
 <script>
 
     Vue.component('comment-section', {
@@ -319,6 +320,15 @@
             pic: '',
             selectedFile: null,
             adult_content: true,
+            cloudinary: {
+                uploadPreset: 'rdua7ya0',
+                apiKey: "252218687775656",
+                cloudName: "hrdaolryt", 
+            },
+            thumb: {
+                url: ''
+            },
+            thumbs: []
         }},
         template: `
         <form enctype="multipart/form-data">
@@ -330,21 +340,42 @@
             <br>
             <span class="limiter">[[ charactersLeftTags ]]</span>
             <br>
-            <input type="file" accept="image/*" @change=onFileChanged class="choosefile">
-            <h2>This post is safe for kids (no blood, gore, etc): <input type="checkbox" id="checkbox" v-model="adult_content"><label for="checkbox">[[ adult_content ? 'Uncheck box to certify image is safe for kids': 'check box if image is for adults' ]]</label></h2>
+            <div class="row">
+                <divclass="col-md-12">
+                    <input type="file" v-model="thumb.url" class="form-control" v-on:change="upload($event.target.files)" accept="image/*" />
+                </div>
+            </div>
+            <h2>This post is safe for kids (no blood, bullying, etc): <input type="checkbox" id="checkbox" v-model="adult_content"><label for="checkbox">[[ adult_content ? 'Uncheck box to certify image is safe for kids': 'check box if image is for adults' ]]</label></h2>
             <button @click.prevent="newPost" class="submit">Submit</button>
         </form>
         `,
         methods: {
-            onFileChanged (event) {
-                console.log(event)
-                this.selectedFile = event.target.files[0]
+            upload: function(file) {
+                const formData = new FormData()
+                formData.append('file', file[0]);
+                formData.append('upload_preset', this.cloudinary.uploadPreset);
+                formData.append('tags', 'gs-vue,gs-vue-uploaded');
+                // For debug purpose only
+                // Inspects the content of formData
+                for(var pair of formData.entries()) {
+                    console.log(pair[0]+', '+pair[1]);
+                }
+                axios.post(this.clUrl, formData).then(res => {
+                    this.thumbs.unshift({
+                    url: res.data.secure_url
+                    }),
+                    console.log(this.thumbs)
+                    this.thumb.url.unshift({
+                    url: res.data.secure_url
+                    })
+                    console.log(this.thumb.url)
+                })
             },
             newPost: function () {
                 let formData = new FormData()
                 formData.append('user_name', this.user.id)
                 formData.append('description', this.newPostWords)
-                formData.append('pic', this.selectedFile)
+                formData.append('pic', this.thumb.url)
                 formData.append('tags', this.tags)
                 formData.append('adult_content', this.adult_content)
                 axios({
@@ -369,6 +400,9 @@
             charactersLeftTags: function () {
                 let char1 = this.tags.length, limit = 400
                 return (limit - char1) + " / " + limit + " " + "characters remaining"
+            },
+            clUrl: function() {
+                return `https://api.cloudinary.com/v1_1/${this.cloudinary.cloudName}/image/upload`
             }
         }
 })
