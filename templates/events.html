@@ -16,7 +16,7 @@
         <h1>Welcome to Kosupure, {{ user.username }}! <span><a href="{% url 'logout' %}" class="logout">Logout ?</a></span></h1>
         <h2>
             <a href="{% url 'home' %}">Kosupure Posts</a>
-            <a href="{% url 'game' %}">Idle Game</a>
+            <a href="{% url 'game' %}" v-if="user.is_creator">Idle Game</a>
             <a href="{% url 'board' %}">Chatroom</a>
             <a href="{% url 'calculator' %}">Calculator</a>
         </h2>
@@ -28,7 +28,7 @@
         <h2>You are not logged in. <a href="{% url 'login' %}" class="logout">Login</a> <a href="{% url 'users:signup' %}" class="logout">Sign Up</a></h2>
         <h2>
             <a href="{% url 'home' %}">Kosupure Posts</a>
-            <a href="{% url 'game' %}">Idle Game</a>
+            <a href="{% url 'game' %}" v-if="user.is_creator">Idle Game</a>
             <a href="{% url 'board' %}">Chatroom</a>
             <a href="{% url 'calculator' %}">Calculator</a>
         </h2>
