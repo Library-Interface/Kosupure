@@ -25,7 +25,7 @@
         </h2>
         <hr class="tophr">
     </header>
-    <h5 class="besmallerdamnit"><a href="{% url 'logout' %}">Logout</a></h5>
+    <h5 class="besmallerdamnit"><a style="font-size: 1em" href="{% url 'logout' %}">Logout</a></h5>
 {% else %}
     <header class="header">
         <h1>Welcome to Kosupure, visitor!</h1>
@@ -41,7 +41,7 @@
 {% endif %}
 
 <div id="app">
-    <h5 class="besmallerdamnit"><a v-if="user.is_creator" href="#" @click="profileActive = profileActive ? false : true">Update Profile</a></h5>
+    <h5><a v-if="user.is_creator" style="font-size: 1em" href="#" @click="profileActive = profileActive ? false : true">Update Profile</a></h5>
     <div v-show="profileActive">
         <update-profile :user="user" :csrf_token='csrf_token' @profile-updated="afterProfileUpdated(user.id)"></update-profile>
     </div>

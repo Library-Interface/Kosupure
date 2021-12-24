@@ -381,14 +381,8 @@ background: black;
 }
 
 @media screen and (max-width : 480px) {
-    h5 {
-        font-size: 1em;
-    }
     a:link, a:visited {
         font-size: 3em;
-    }
-    .besmallerdamnit {
-        font-size: 1em;
     }
     body {
         font-size: .5em;
