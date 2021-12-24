@@ -226,7 +226,7 @@ Vue.component('youtube-live', {
             this.loadChat()
         },
         watch: {
-            msgInput: function(){
+            msg: function(){
                 var banned = ["fuck", "shit", "pussy", "vagina", "penis"]
                 for (var i = 0; i < banned.length; i++) {
                     if (this.msg.includes(banned[i])) {
