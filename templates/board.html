@@ -227,7 +227,7 @@ Vue.component('youtube-live', {
         },
         watch: {
             msg: function(){
-                var banned = ["fuck", "shit", "pussy", "vagina", "penis"]
+                var banned = ["fuck", "shit", "pussy", "vagina", "penis", "ass", "Ass", "@ss", "Shit", "Fuck", "Damn", "damn", "asshole", "Asshole"]
                 for (var i = 0; i < banned.length; i++) {
                     if (this.msg.includes(banned[i])) {
                         this.msg = this.msg.replace(banned[i], "*".repeat(banned[i].length)) //sets the input to * times the length of the banned word
