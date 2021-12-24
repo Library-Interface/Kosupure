@@ -12,7 +12,7 @@ body {
 .header {
     text-shadow: #ffffff -1px -1px 0px, #ffffff -1px 1px 0px, #ffffff 1px 1px 0px, #ffffff 1px -1px 0px;
     color: rgb(83,25,158);
-    padding-top: 14px;
+    padding-top: 4px;
     font-family: 'Anton', sans-serif;
     font-variant: small-caps;
     text-align: center;
@@ -382,7 +382,7 @@ background: black;
 
 @media screen and (max-width : 480px) {
     a:link, a:visited {
-        font-size: 3em;
+        font-size: 4em;
     }
     body {
         font-size: .5em;

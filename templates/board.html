@@ -21,29 +21,32 @@
     <header class="header">
         <h1>Welcome to Kosupure, {{ user.username }}!</h1> 
         <h2>
-            <span><a href="{% url 'logout' %}">Logout</a></span>
+            <a href="{% url 'home' %}">Cosplay Corner</a>
             <a href="{% url 'events' %}">Events</a>
+            <a href="{% url 'board' %}">LiveChat</a>
             <a href="{% url 'calculator' %}">Calculator</a>
         </h2>
         <hr class="tophr">
     </header>
+    <span><a href="{% url 'logout' %}">Logout</a></span>
 {% else %}
     <header class="header">
         <h1>Welcome to Kosupure, visitor!</h1>
         <h1>You are not logged in.</h1> 
         <h2>
-            <span><a href="{% url 'login' %}">Login</a> <a href="{% url 'users:signup' %}" >Sign Up</a></span>
-            <a href="{% url 'home' %}">Kosupure Posts</a>
+            <a href="{% url 'home' %}">Cosplay Corner</a>
             <a href="{% url 'events' %}">Events</a>
+            <a href="{% url 'board' %}">LiveChat</a>
             <a href="{% url 'calculator' %}">Calculator</a>
         </h2>
+    </header>
+    <span><a href="{% url 'login' %}">Login</a> <a href="{% url 'users:signup' %}" >Sign Up</a></span>
         <br>
         <hr>
         <br>
         <h1>You must log-in to participate</h1>
         <hr>
         <br>
-
         <br>
     </header>
 {% endif %}
@@ -75,7 +78,7 @@
                         <div v-for="m in chat">
                             <div style="margin-bottom: 10px">
                                 <span class="small" style="display: inline-block">[[ m.date ]]</span>
-                                <span v-bind:style="{ color: m.color }">[[ m.chat_name.username ]]</span>
+                                <span :style="color: [[ m.color ]]">[[ m.chat_name.username ]]</span>
                                 <span v-html="m.message"></span>
                             </div>
                         </div>
@@ -157,7 +160,6 @@ Vue.component('youtube-live', {
         for (var i = 0; i < 6; i++) {
           color += letters[Math.floor(Math.random() * 16)]
         }
-
         return color;
         }
 
@@ -195,6 +197,7 @@ Vue.component('youtube-live', {
                     url: '/apis/v1/chat/'
                 }).then(response => {
                     this.chat = response.data.reverse()
+                    this.scrollBottom()
                 })
             },
             submitChat: function (post) {
