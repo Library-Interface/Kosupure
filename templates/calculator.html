@@ -19,7 +19,6 @@
         <h2>
             <span><a href="{% url 'logout' %}">Logout</a></span>
             <a href="{% url 'home' %}">Kosupure Posts</a>
-            <a href="{% url 'game' %}" v-if="user.is_creator">Idle Game</a>
             <a href="{% url 'events' %}">Events</a>
             <a href="{% url 'board' %}">Chatroom</a>
         </h2>
@@ -28,10 +27,10 @@
 {% else %}
     <header class="header">
         <h1>Welcome to Kosupure, visitor!</h1>
-        <h1>You are not logged in. <a href="{% url 'login' %}">Login</a> <a href="{% url 'users:signup' %}" >Sign Up</a></h1>
+        <h1>You are not logged in.</h1> 
         <h2>
+            <span><a href="{% url 'login' %}">Login</a> <a href="{% url 'users:signup' %}" >Sign Up</a></span>
             <a href="{% url 'home' %}">Kosupure Posts</a>
-            <a href="{% url 'game' %}" v-if="user.is_creator">Idle Game</a>
             <a href="{% url 'events' %}">Events</a>
             <a href="{% url 'board' %}">Chatroom</a>
         </h2>
