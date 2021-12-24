@@ -15,7 +15,7 @@
 <body>
 {% csrf_token %}
 {% if user.is_authenticated %}
-    <header>
+    <header class="header">
         <h1>Welcome to Kosupure, {{ user.username }}! <span><a href="{% url 'logout' %}" class="logout">Logout ?</a></span></h1>
         <h2>
             <a href="{% url 'home' %}">Kosupure Posts</a>
@@ -26,7 +26,7 @@
         <hr class="tophr">
     </header>
 {% else %}
-    <header2>
+    <header2 class="header">
         <h1>Welcome to Kosupure, visitor!</h1>
         <h2>You are not logged in. <a href="{% url 'login' %}" class="logout">Login</a> <a href="{% url 'users:signup' %}" class="logout">Sign Up</a></h2>
             <h2>
