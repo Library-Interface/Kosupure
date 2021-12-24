@@ -12,7 +12,8 @@ body {
 .header {
     text-shadow: #ffffff -1px -1px 0px, #ffffff -1px 1px 0px, #ffffff 1px 1px 0px, #ffffff 1px -1px 0px;
     color: rgb(83,25,158);
-    font: normal normal normal 24.px/1.4em Anton, sans-serif;
+    padding-top: 14px;
+    font-family: 'Anton', sans-serif;
     font-variant: small-caps;
     text-align: center;
     background-color: black;
@@ -412,6 +413,7 @@ background: black;
     }
     h1:not(.header) {
         font-size: 2em;
+        padding-top: 14px;
     }
     h2 {
         font-size: 1em;

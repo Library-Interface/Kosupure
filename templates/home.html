@@ -5,6 +5,9 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Anton&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="{% static 'main.css' %}">
     <title>Kosupure Home</title>
 </head>
@@ -25,8 +28,9 @@
 {% else %}
     <header class="header">
         <h1>Welcome to Kosupure, visitor!</h1>
-        <h1>You are not logged in. <a href="{% url 'login' %}">Login</a> <a href="{% url 'users:signup' %}" >Sign Up</a></h1>
+        <h1>You are not logged in.</h1> 
         <h2>
+            <span><a href="{% url 'login' %}">Login</a> <a href="{% url 'users:signup' %}" >Sign Up</a></span>
             <a href="{% url 'events' %}">Events</a>
             <a href="{% url 'board' %}">Chatroom</a>
             <a href="{% url 'calculator' %}">Calculator</a>
