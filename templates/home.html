@@ -94,6 +94,7 @@
             <comment-section :user="user" :post='post' :comments='comments' :csrf_token='csrf_token' @comment-posted="afterCommentPosted()"></comment-section>
             <hr class="hrbig">
             <br><br>
+            <br><br>
         </div>
         <div v-if="user.is_adult" v-for="post in posts" :key="posts.id">
             <div class="flex-container"> 
@@ -121,6 +122,7 @@
             <hr>
             <comment-section :user="user" :post='post' :comments='comments' :csrf_token='csrf_token' @comment-posted="afterCommentPosted()"></comment-section>
             <hr class="hrbig">
+            <br><br>
             <br><br>
         </div>
     </div>
