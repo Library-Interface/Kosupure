@@ -387,6 +387,9 @@ background: black;
     body {
         font-size: .5em;
     }
+    h5 {
+        font-size: 1em;
+    }
     input {
         font-size: .5em;
     }
