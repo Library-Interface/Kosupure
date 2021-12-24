@@ -13,8 +13,9 @@
 {% csrf_token %}
 {% if user.is_authenticated %}
     <header class="header">
+        <h1>Welcome to Kosupure, {{ user.username }}!</h1> 
         <h2>
-            <h1>Welcome to Kosupure, {{ user.username }}!</h1> <span><a href="{% url 'logout' %}">Logout ?</a></span>
+            <span><a href="{% url 'logout' %}">Logout ?</a></span>
             <a href="{% url 'events' %}">Events</a>
             <a href="{% url 'game' %}" v-if="user.is_creator">Idle Game</a>
             <a href="{% url 'board' %}">Chatroom</a>
