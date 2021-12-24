@@ -382,7 +382,7 @@ background: black;
 
 @media screen and (max-width : 480px) {
     a:link, a:visited {
-        font-size: .5em;
+        font-size: 1.5em;
     }
     body {
         font-size: .5em;
@@ -409,7 +409,7 @@ background: black;
         font-size: 1em;
     }
     h1 {
-        font-size: 1em;
+        font-size: 1.5em;
     }
     h2 {
         font-size: 1em;
@@ -426,5 +426,11 @@ background: black;
         min-width: 225px;
         padding: 1px;
         margin: 1px;
+    }
+    .form-control {
+        font-size: 1em;
+    }
+    .button {
+        font-size: 1em;
     }
 }
