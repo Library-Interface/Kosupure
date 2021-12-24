@@ -447,7 +447,7 @@
                     method: 'GET',
                     url: '/apis/v1/posts/'
                 }).then(response => {
-                    this.posts = response.data.reverse()
+                    this.posts = response.data
                 })
             },
             searchPosts: function () {
