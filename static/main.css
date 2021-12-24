@@ -382,7 +382,7 @@ background: black;
 
 @media screen and (max-width : 480px) {
     a:link, a:visited {
-        font-size: 1.6em;
+        font-size: 3em;
     }
     body {
         font-size: .5em;
@@ -412,8 +412,7 @@ background: black;
         font-size: .7em;
     }
     h1:not(.header) {
-        font-size: 2em;
-        padding-top: 14px;
+        font-size: 3.5em;
     }
     h2 {
         font-size: 1em;
