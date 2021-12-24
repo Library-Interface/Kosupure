@@ -23,7 +23,7 @@ a:link, a:visited {
     padding: 4px 5px;
     text-align: center;
     text-decoration: none;
-    display: inline-block;
+    color: #0d6efd;
 }
 
 a:hover, a:active {
@@ -382,7 +382,7 @@ background: black;
 
 @media screen and (max-width : 480px) {
     a:link, a:visited {
-        font-size: 4em;
+        font-size: 3em;
     }
     body {
         font-size: .5em;
@@ -412,7 +412,7 @@ background: black;
         font-size: .7em;
     }
     h1:not(.header) {
-        font-size: 3.5em;
+        font-size: 4em;
     }
     h2 {
         font-size: 1em;

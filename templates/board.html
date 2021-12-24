@@ -78,7 +78,7 @@
                         <div v-for="m in chat">
                             <div style="margin-bottom: 10px">
                                 <span class="small" style="display: inline-block">[[ m.date ]]</span>
-                                <span :style="color: [[ m.color ]]">[[ m.chat_name.username ]]</span>
+                                <span v-bind:style="{ color: m.color }">[[ m.chat_name.username ]]</span>
                                 <span v-html="m.message"></span>
                             </div>
                         </div>
