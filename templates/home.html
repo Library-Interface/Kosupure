@@ -58,9 +58,9 @@
         <h5 @click="tok = tok ? false : true" class="refuge"> [[ message ]] </h5> 
         <input type="text" v-model="searchTerm" placeholder="Enter search term" v-on:keyup.enter="searchPosts">
         <select v-model="selection">
+            <option value="">Search Whole Site</option>
             <option value="lookUp"> Search Tag (just one)</option> 
             <option value="userSearch">Search Usernames (exact name)</option>
-            <option value="">Search Whole Site</option>
         </select>
         <button @click="searchPosts">Find it!</button>
         <button @click="loadPosts">Back to homepage</button>
@@ -234,7 +234,7 @@
             }
         },
         template: `<div>
-        <button v-on:click="count--">Hit me if you want to Post [[ count ]]</button>
+        <p> 🥊 <button v-on:click="count--"> *Bang*    [[ count ]]    *POW* </button> to Post </p>
         <button v-if="count < 1" @click="isHidden = !isHidden" class="reveal" style="animation-delay:0.07s">Click to make a new post</button>
         <new-post v-if="!isHidden" :user="user" :csrf_token='csrf_token' @post-created="$emit('post-created1'), isHidden=true"  class="submission"></new-post>
         </div>`
@@ -249,9 +249,10 @@
             }
         },
         template: `
-        <div class='flex-container'>
-            <div @click="submitlike" class="heartbutton"> ❤ [[ countlikes ]] ❤</div>
-            <div class="likedby"> ❤ by: <template v-for="like in post.liked_detail"> [[ like.username ]], </template></div>
+        <div>
+            <div class="likedby"> 🥊 by: <template v-for="like in post.liked_detail"> [[ like.username ]], </template></div>
+            <br>
+            <h6 @click="submitlike" class="heartbutton"> 🥊 [[ countlikes ]] 🥊 </h6>
         </div>
         `,
         methods: {
@@ -429,7 +430,7 @@
             searchTerm: '',
             commentSearch: '',
             descriptionSearch: '',
-            selection: 'lookUp',
+            selection: '',
             searchPoints: 0,
             search: '',
             tagSearch: '',
