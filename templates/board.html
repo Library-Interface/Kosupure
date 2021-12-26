@@ -59,9 +59,8 @@
                 <center>
                     <h1>Superhero Live!</h1>
                 </center>
-                <div v-if='user.is_creator'>
-                    <button @click="deleteChat">Delete Chat</button>
-                </div>
+            
+                <br>
                 <div v-if='user.id' class="row">
                     <div class="col-md-12">
                         <div class="panel panel-default">
@@ -75,6 +74,9 @@
                             </div>
                         </div>
                     </div>
+                </div>
+                <div>
+                    <button @click="deleteChat">Click here to clean chatroom</button>
                 </div>    
                 <div class="panel panel-default" style="height: 700px; overflow: auto; border: black solid 2px; background-color: lightblue;" id="chat-content">
                         <div v-for="m in chat" class="chatback">
