@@ -1,10 +1,6 @@
 # Kosupure
 コスプレ: Kosupure is a Social Media Platform for Cosplay
-
-CustomUser made with the help of tutorial from Django: https://learndjango.com/tutorials/django-custom-user-model
-
-using pillow
-
+https://kosupure.herokuapp.com/
 
 Levels of access: 
 Visitor: Can only view images safe for kids and event schedule
@@ -23,3 +19,5 @@ heroku config:set DISABLE_COLLECTSTATIC=1
 git push heroku main
 heroku config:unset DISABLE_COLLECTSTATIC
 heroku run python manage.py collectstatic
+
+CustomUser made with the help of tutorial from Django: https://learndjango.com/tutorials/django-custom-user-model
