@@ -72,6 +72,8 @@
         
         <br>
         <p v-if="!isHidden">
+            Please Wait a moment for NASA to retrieve the date of the image or your custom date...
+            <br>
             According to NASA, a [[ sizeMeters ]] meter asteroid traveling at [[ mph ]] mph named [[ name ]]
             <br> 
             has a nearest distance of [[lunar]] lunar units from the Earth on [[ date ]]
@@ -92,9 +94,9 @@
         </div>
         <hr>
         <div>
-            <h1 @mouseover="active = true" @mouseleave="active = false" class='elon'>Batman Says:</h1>
+            <h3 @mouseover="active = true" @mouseleave="active = false" class='elon'>Batman Says: (click me)</h3>
             <div v-show="active">
-                <h1>“Maybe That's What Batman Is About. Not Winning. But Failing, And Getting Back Up. Knowing He'll Fail, Fail A Thousand Times, But Still Won't Give Up.”</h1>
+                <h5>“Maybe That's What Batman Is About. Not Winning. But Failing, And Getting Back Up. Knowing He'll Fail, Fail A Thousand Times, But Still Won't Give Up.”</h5>
             </div>
         </div>
         <br><br>
@@ -115,22 +117,23 @@
                     <button @click="money++">💰</button>
                     <div>
                         Money: [[ Math.floor(money) ]]
+                        <br>
                         [[ displayMissiles ]]
                     </div>
                     <div v-for="(resources, id) in resources" class="gameicon">
-                        [[ resources.count ]]x [[ resources.icon ]] Tier [[ resources.rate ]] | 
+                        <h3>[[ resources.count ]]x [[ resources.icon ]] Tier [[ resources.rate ]] | </h3>
+                        <p>Finance Lobbyist for more [[ id ]] for 💰[[ resources.cost ]]
                         <button @click="buy(id)"
-                            v-if="money >= resources.cost">
-                            Finance Lobbyist for more [[ id ]]: 💰[[ resources.cost ]]
-                        </button>
+                            v-if="money >= resources.cost">[[ resources.icon]]
+                        </button></p>
+                        <p>Buy 10 for 💰[[ resources.cost ]]
                         <button @click="buy10(id)"
-                            v-if="money >= resources.cost*10">
-                            Buy 10: 💰[[ resources.cost ]]
-                        </button>
+                            v-if="money >= resources.cost*10">[[ resources.icon]]
+                        </button></p>
+                        <p>Upgrade [[ id ]] Tier for 💰[[ (resources.cost *5) ]]
                         <button @click="upgrade(id)"
-                            v-if="money >= (resources.cost * 5)">
-                            Upgrade [[ id ]]: 💰[[ (resources.cost *5) ]]
-                        </button>
+                            v-if="money >= (resources.cost * 5)">[[ resources.icon]]
+                        </button></p>
                     </div>
             </aside>
         </section>

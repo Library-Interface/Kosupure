@@ -81,7 +81,7 @@
         template: `
         <div>
             <form>
-                <h2>The Convention:</h2>
+                <h2>The Convention Expenses:</h2>
                 <p>Hotel Costs:
                     <input type="text" size="50" placeholder='Hotel (usually $250-$300/night)' v-model="conhotel">
                 </p>
@@ -97,7 +97,7 @@
                 <br>
                 <center>
                     <button @click.prevent="conmath">Calculate Convention Total</button>
-                    <p>Convention Total: $[[ contotal ]]</p>
+                    <h3>Convention Total: $[[ contotal ]]</h3>
                 </center>
             </form>
             <form v-if="contotal > 0">
@@ -117,7 +117,7 @@
                 <br>
                 <center>
                     <button @click.prevent="homemath">Calculate Living Expenses</button>
-                    <p>Living Expenses (12 Months): $[[ hometotal ]]</p>
+                    <h3>Living Expenses (12 Months): $[[ hometotal ]]</h3>
                     <h1>Total Cost thus far: $[[ leftover ]]</h1>
                 </center>
             </form>
@@ -127,7 +127,7 @@
                 <p>Annual Earnings after taxes: <input type="text" size="25" placeholder="No commas, ie 26000" v-model="money"></p>
                 <center>
                     <button @click.prevent="cosplaymoney">Calculate Money for Cosplay</button>
-                    <p>Money for Cosplay: $[[ cosplaymonies ]]</p>
+                    <h1>Money for Cosplay: $[[ cosplaymonies ]]</h1>
                 </center>
             </form>
         </div>

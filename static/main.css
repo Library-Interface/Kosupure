@@ -218,7 +218,7 @@ input[type=submit] {
 }
 
 .tard {
-    width: 80vw;
+    width: 10vw;
     display: block;
     margin-left: auto;
     margin-right: auto;
@@ -381,11 +381,14 @@ background: black;
 }
 
 .chatback {
-    border-bottom: purple 1px ridge;
-    color: white;
+    border-bottom: purple .5px ridge;
+    color: purple;
+    font-weight: 790;
     margin-left: 1%;
-    margin-top: 1px;
+    margin-top: 3px;
     margin-right: 1%;
+    margin-top: 3px;
+    padding-top: 4px;
 }
 
 @media screen and (max-width : 480px) {
@@ -447,4 +450,24 @@ background: black;
     .btn {
         font-size: 1em;
     }
+    .imageContainer img {
+        height: 50px;
+        width: auto;
+    }
+    #bag {
+        height: 160px;
+        max-width: 335px;
+    }
+    #bag-health div {
+        height: 13px;
+    }
+    #controls {
+        width: 300px;
+        margin: 0 auto;
+        }
+    .game {
+    font-size: .8em;
+    border: 4px solid #00a9d9;
+    width: 90vw;
+}
 }

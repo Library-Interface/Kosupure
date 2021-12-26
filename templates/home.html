@@ -45,12 +45,17 @@
     <div v-show="profileActive">
         <update-profile :user="user" :csrf_token='csrf_token' @profile-updated="afterProfileUpdated(user.id)"></update-profile>
     </div>
+    <center>
     <div id='remove'>
-    <img src='{% static "images/tardis.jpg" %}' @click="searchPoints++" class='tard'>
-    <h1>Tardis departing in [[ timerCount ]]</h1>
+        <img src='{% static "images/tardis.jpg" %}' @click="searchPoints++" class='tard'>
+        <h6>Tardis departing in [[ timerCount ]]</h6>
     </div>
-    <div v-if="searchPoints > 2">
-        <h1 @click="tok = tok ? false : true" class="refuge"> [[ message ]] </h1> 
+    <div v-if="searchPoints >1">
+        <a href="{% url 'game' %}">Game/NASA Page</a>
+    </div>
+    </center>
+    <div>
+        <h5 @click="tok = tok ? false : true" class="refuge"> [[ message ]] </h5> 
         <input type="text" v-model="searchTerm" placeholder="Enter search term" v-on:keyup.enter="searchPosts">
         <select v-model="selection">
             <option value="lookUp"> Search Tag (just one)</option> 
@@ -66,7 +71,7 @@
         <blockquote class="tiktok-embed" cite="https://www.tiktok.com/@adamvegmai/video/7009508264001932550" data-video-id="7009508264001932550" style="max-width: 605px;min-width: 325px;" > <section> <a target="_blank" title="@adamvegmai" href="https://www.tiktok.com/@adamvegmai">@adamvegmai</a> <p>Fun times. @pandasnarepas @buckets.n.stuff @justmysty <a title="fanx2021" target="_blank" href="https://www.tiktok.com/tag/fanx2021">##fanx2021</a> <a title="mandaloriancosplay" target="_blank" href="https://www.tiktok.com/tag/mandaloriancosplay">##mandaloriancosplay</a> <a title="jaxcosplay" target="_blank" href="https://www.tiktok.com/tag/jaxcosplay">##jaxcosplay</a> <a title="vegetacosplay" target="_blank" href="https://www.tiktok.com/tag/vegetacosplay">##vegetacosplay</a> <a title="pharoah" target="_blank" href="https://www.tiktok.com/tag/pharoah">##pharoah</a> <a title="fanx21" target="_blank" href="https://www.tiktok.com/tag/fanx21">##fanx21</a> <a title="fyp" target="_blank" href="https://www.tiktok.com/tag/fyp">##fyp</a></p> <a target="_blank" title="♬ WANNABE - ITZY" href="https://www.tiktok.com/music/WANNABE-6800656719199340546">♬ WANNABE - ITZY</a> </section> </blockquote> <script async src="https://www.tiktok.com/embed.js"></script>
     </aside>
 
-    <div v-if="searchPoints > 0">
+    <div>
         <div v-if="!user.is_adult" v-for="post in filteredAdult" :key="posts.id">
             <div class="flex-container"> 
                 <div @click="showUser(post.posted_by)"> Posted by: [[ post.posted_by['username'] ]] </div>
@@ -429,7 +434,7 @@
             search: '',
             tagSearch: '',
             tok: false,
-            timerCount: 11,
+            timerCount: 3,
             website: '',
             profileActive: false,
         },
@@ -575,7 +580,7 @@
                     if (value > 0) {
                         setTimeout(() => {
                             this.timerCount--;
-                        }, 1000);
+                        }, 1500);
                     }
                 },
                 immediate: true // This ensures the watcher is triggered upon creation
@@ -585,7 +590,7 @@
 
 
 
-setTimeout(() => { document.getElementById("remove").remove(); }, 11000)
+setTimeout(() => { document.getElementById("remove").remove(); }, 6000)
 
 
 </script>
