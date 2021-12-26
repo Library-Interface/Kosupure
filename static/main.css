@@ -380,6 +380,14 @@ background: black;
     color: white;
 }
 
+.chatback {
+    border-bottom: purple 1px ridge;
+    color: white;
+    margin-left: 1%;
+    margin-top: 1px;
+    margin-right: 1%;
+}
+
 @media screen and (max-width : 480px) {
     a:link, a:visited {
         font-size: 3em;

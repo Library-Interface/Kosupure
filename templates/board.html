@@ -55,30 +55,29 @@
     <youtube-live :go_live='go_live' :user='user' :csrf_token='csrf_token'></youtube-live>
     <div class="row">
         <div class="col-md-12">
-            <div class="panel panel-default" style="height: 700px; overflow: auto" id="chat-content">
-                <div class="panel-body">
-                    <center>
+            <div class="panel-body">
+                <center>
                     <h1>Superhero Live!</h1>
-                    </center>
-                    <div>Participants: [[ participants ]] </div>
-                    <div v-if='user.id' class="row">
-                        <div class="col-md-12">
-                            <div class="panel panel-default">
-                                <div class="panel-body">
-                                    <strong>Interact Here:</strong><br>
-                                    <input type="text" class="form-control" style="margin-bottom: 10px" placeholder="Enter your message..."  v-model="msg" v-on:keyup.enter="submitChat">
-                                    <button class="btn btn-primary btn" @click="submitChat">
-                                        Send Message
-                                        <span class="glyphicon glyphicon-ok" aria-hidden="true"></span>
-                                    </button>
-                                </div>
+                </center>
+                <div>Participants: [[ participants ]]</div>
+                <div v-if='user.id' class="row">
+                    <div class="col-md-12">
+                        <div class="panel panel-default">
+                            <div class="panel-body">
+                                <strong>Interact Here:</strong><br>
+                                <input type="text" class="form-control" style="margin-bottom: 10px" placeholder="Enter your message..."  v-model="msg" v-on:keyup.enter="submitChat">
+                                <button class="btn btn-primary btn" @click="submitChat">
+                                    Send Message
+                                    <span class="glyphicon glyphicon-ok" aria-hidden="true"></span>
+                                </button>
                             </div>
                         </div>
-                    </div>    
-                        <div v-for="m in chat">
+                    </div>
+                </div>    
+                <div class="panel panel-default" style="height: 700px; overflow: auto; border: black solid 2px; background-color: black;" id="chat-content">
+                        <div v-for="m in chat" class="chatback">
                             <div style="margin-bottom: 10px">
-                                <span class="small" style="display: inline-block">[[ m.date ]]</span>
-                                <span v-bind:style="{ color: m.color }">[[ m.chat_name.username ]]</span>
+                                <span>[[ m.chat_name.username ]]:  </span>
                                 <span v-html="m.message"></span>
                             </div>
                         </div>
@@ -154,15 +153,6 @@ Vue.component('youtube-live', {
     }
 })
 
-    function getRandomColor() {
-        const letters = '0123456789ABCDEF'
-        let color = '#'
-        for (var i = 0; i < 6; i++) {
-          color += letters[Math.floor(Math.random() * 16)]
-        }
-        return color;
-        }
-
         let part1= "https://www.youtube.com/embed/"
         let part2= "6KwOld751DE"
         let part3= part1.concat(part2)
@@ -176,7 +166,6 @@ Vue.component('youtube-live', {
             name: '',
             msg: '',
             chat: [],
-            color: getRandomColor(),
             participants: [],
             time: (new Date()).toLocaleTimeString(),
         },
@@ -196,28 +185,27 @@ Vue.component('youtube-live', {
                     method: 'GET',
                     url: '/apis/v1/chat/'
                 }).then(response => {
-                    this.chat = response.data.reverse()
+                    this.chat = response.data
                     this.scrollBottom()
                 })
             },
             submitChat: function (post) {
                 if (this.msg.length > 0){
-                axios({
-                    method: 'post',
-                    url: '/apis/v1/chat/',
-                    headers: {
-                        'X-CSRFToken': this.csrf_token
-                    },
-                    data: {
-                            "message": this.msg,
-                            "name": this.user.id
-                    }
-                }).then(response => {
-                    this.msg = ''
-                    loadChat()
-                    this.scrollBottom()
-                })
-            }},
+                    axios({
+                        method: 'post',
+                        url: '/apis/v1/chat/',
+                        headers: {
+                            'X-CSRFToken': this.csrf_token
+                        },
+                        data: {
+                                "message": this.msg,
+                                "name": this.user.id
+                        }
+                    }).then(response => {
+                        this.msg = ''
+                        this.loadChat()
+                    })
+                }},
             scrollBottom(){
                 Vue.nextTick(function () {
                     var div = document.getElementById("chat-content")
@@ -232,7 +220,8 @@ Vue.component('youtube-live', {
         },
         watch: {
             msg: function(){
-                var banned = ["fuck", "shit", "pussy", "vagina", "penis", "ass", "Ass", "@ss", "Shit", "Fuck", "Damn", "damn", "asshole", "Asshole"]
+                var banned = ["fuck", "shit", "pussy", "vagina", "penis", "ass", "Ass", "@ss", "Shit", "Fuck", "Damn", "damn", "asshole", "Asshole",
+                "Fat", "fat", "tit", "Tit", "Tits", "tits", "fUck", "fuCk", "fucK", "dick", "Dick", "whore", "Whore", "politics", "BLM", "hate", "Hate", "retard"]
                 for (var i = 0; i < banned.length; i++) {
                     if (this.msg.includes(banned[i])) {
                         this.msg = this.msg.replace(banned[i], "*".repeat(banned[i].length)) //sets the input to * times the length of the banned word
