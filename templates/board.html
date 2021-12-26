@@ -59,7 +59,9 @@
                 <center>
                     <h1>Superhero Live!</h1>
                 </center>
-                <div>Participants: [[ participants ]]</div>
+                <div v-if='user.is_creator'>
+                    <button @click="deleteChat">Delete Chat</button>
+                </div>
                 <div v-if='user.id' class="row">
                     <div class="col-md-12">
                         <div class="panel panel-default">
@@ -166,7 +168,6 @@ Vue.component('youtube-live', {
             name: '',
             msg: '',
             chat: [],
-            participants: [],
             time: (new Date()).toLocaleTimeString(),
         },
         methods: {
@@ -177,8 +178,10 @@ Vue.component('youtube-live', {
                 }).then(response => {
                     this.user = response.data
                     this.name = this.user.username
-                    this.participants.push({name: this.name})
                 })
+            },
+            deleteChat: function (){
+                this.chat = ''
             },
             loadChat: function () {
                 axios({
