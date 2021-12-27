@@ -177,8 +177,16 @@ input[type=submit] {
     width: 46px;
     padding: 9px;
 }
+.heartbutton1 {
+    border:#00a9d9 solid 4px;
+    width: 46px;
+    padding: 9px;
+}
 
 .heartbutton:hover {
+    border-color: rgba(255,255,255,1);
+}
+.heartbutton1:hover {
     border-color: rgba(255,255,255,1);
 }
 
@@ -473,6 +481,11 @@ background: black;
     .heartbutton {
         border:#00a9d9 solid 4px;
         width: 26px;
+        padding: 9px;
+    }
+    .heartbutton1 {
+        border:#00a9d9 solid 4px;
+        width: 67px;
         padding: 9px;
     }
     .events {
