@@ -11,9 +11,10 @@ Logged-in User: Ability to comment on posts, like posts, commit to events and pa
 Creator: Ability to Post, Host LiveChat and Create Events
 Adult: See the posts with violence, halloween-themed, etc not deemed safe for kids 
 
-![first](https://user-images.githubusercontent.com/65050037/147325806-83a1da4c-4a01-4e38-abb9-685e7261cbe3.JPG)
-![first event](https://user-images.githubusercontent.com/65050037/147325810-0446b169-dee8-46b9-b06b-183f27c2cc18.JPG)
-![first live](https://user-images.githubusercontent.com/65050037/147325812-306c2ebb-778a-46e8-81a4-dcafa5a25958.JPG)
+![home](https://user-images.githubusercontent.com/65050037/147497086-53051ed5-49b5-4920-8cc9-5fa3d33d4441.JPG)
+![chat](https://user-images.githubusercontent.com/65050037/147497091-fcee4a64-9155-458b-9b99-79ff7752d89b.JPG)
+![game](https://user-images.githubusercontent.com/65050037/147497100-f6e56947-63cf-4685-af42-782df5cd0086.JPG)
+![events page](https://user-images.githubusercontent.com/65050037/147497105-ab2a0ebb-fe1e-4011-9e11-eb5de768129f.JPG)
 ![first calc](https://user-images.githubusercontent.com/65050037/147325816-4f9b78c3-433d-4e9d-854c-9c9102598679.JPG)
 
 
