@@ -2,6 +2,9 @@
 コスプレ: Kosupure is a Social Media Platform for Cosplay
 https://kosupure.herokuapp.com/
 
+
+This is a kid-friendly app that is designed for cosplay enthusiasts. The main page is similar to instagram with posts that have like, comment and search capabilities. There is an event page with comment and attending functionality, and a chatroom which features live-streaming from the scheduled cosplayer. Finally, there is a ‘how much cosplay can i afford’ page.
+
 Levels of access: 
 Visitor: Can only view images safe for kids and event schedule
 Logged-in User: Ability to comment on posts, like posts, commit to events and participate in live-chatroom
